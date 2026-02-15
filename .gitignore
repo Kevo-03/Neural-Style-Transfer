@@ -2,6 +2,7 @@
 node_modules/
 backend/venv/
 backend/__pycache__/
+*/__pycache__
 
 # Environment variables (Never commit these!)
 .env
