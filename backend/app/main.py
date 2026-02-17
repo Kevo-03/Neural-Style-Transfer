@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.db import create_db_and_tables
+from .routers import nst
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -19,6 +20,8 @@ app = FastAPI(
     title="Neural Style Transfer API", 
     lifespan=lifespan
 )
+
+app.include_router(nst.router, tags=["Style Transfer"])
 
 @app.get("/")
 def root():
