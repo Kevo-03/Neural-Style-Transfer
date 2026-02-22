@@ -1,8 +1,9 @@
 # Dependencies
 node_modules/
 backend/venv/
-backend/__pycache__/
-*/__pycache__
+__pycache__/
+*.py[cod]
+*$py.class
 
 # Environment variables (Never commit these!)
 .env
@@ -13,7 +14,11 @@ backend/__pycache__/
 
 # Machine Learning (Don't commit heavy weights or inputs)
 backend/ml_engine/models/
-backend/input/
-backend/output/
+backend/ml_engine/input/
+backend/ml_engine/output/
 backend/static/
 *.pth
+
+# Databases
+*.db
+*.sqlite3
