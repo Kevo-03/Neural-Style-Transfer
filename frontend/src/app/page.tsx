@@ -169,15 +169,20 @@ export default function Home() {
               <CheckCircle className="w-8 h-8" /> Done!
             </div>
 
-            {/* Placeholder for the Result Image */}
-            <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
-              <p className="text-gray-300">Image Path from DB: <br /><code className="text-yellow-500">{resultImage}</code></p>
-              <p className="text-sm text-gray-500 mt-2">(We need to fix the backend to serve this file next!)</p>
-            </div>
+            {/* THE NEW RESULT IMAGE DISPLAY */}
+            {resultImage && (
+              <div className="relative p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-2xl">
+                <img
+                  src={resultImage}
+                  alt="Generated Masterpiece"
+                  className="w-full max-w-2xl rounded-lg object-cover"
+                />
+              </div>
+            )}
 
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition"
+              className="px-6 py-2 mt-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition font-semibold"
             >
               Create Another
             </button>
