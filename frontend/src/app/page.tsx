@@ -7,6 +7,9 @@ import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle, AlertCircle } fr
 export default function Home() {
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [styleFile, setStyleFile] = useState<File | null>(null);
+  const [contentPreview, setContentPreview] = useState<string | null>(null);
+  const [stylePreview, setStylePreview] = useState<string | null>(null);
+
 
   // UI States
   const [isUploading, setIsUploading] = useState(false);
@@ -15,10 +18,13 @@ export default function Home() {
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setFile: (f: File) => void
+    setFile: (f: File) => void,
+    setPreview: (p: string) => void
   ) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setFile(file);
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -84,27 +90,46 @@ export default function Home() {
       {/* Input Section - Only show if we are NOT done */}
       {status !== "COMPLETED" && (
         <div className="grid grid-cols-2 gap-8 w-full max-w-4xl animate-fade-in">
+
           {/* Content Image */}
-          <div className={`flex flex-col items-center gap-4 p-8 border-2 border-dashed rounded-xl transition ${contentFile ? 'border-purple-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}>
-            <ImageIcon className="w-12 h-12 text-gray-400" />
-            <h2 className="text-xl font-semibold">Content Image</h2>
+          {/* ADDED: relative, overflow-hidden, h-64 */}
+          <div className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition relative overflow-hidden h-64 ${contentFile ? 'border-purple-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}>
+
+            {contentPreview ? (
+              <img src={contentPreview} alt="Content Preview" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+            ) : (
+              <ImageIcon className="w-12 h-12 text-gray-400 z-10 relative" />
+            )}
+
+            {/* ADDED: z-10 relative to keep text above the image */}
+            <h2 className="text-xl font-semibold z-10 relative drop-shadow-md">Content Image</h2>
+
+            {/* ADDED: z-10 relative to keep input clickable */}
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => handleFileChange(e, setContentFile)}
-              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+              onChange={(e) => handleFileChange(e, setContentFile, setContentPreview)}
+              className="z-10 relative file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer"
             />
           </div>
 
           {/* Style Image */}
-          <div className={`flex flex-col items-center gap-4 p-8 border-2 border-dashed rounded-xl transition ${styleFile ? 'border-pink-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}>
-            <UploadCloud className="w-12 h-12 text-gray-400" />
-            <h2 className="text-xl font-semibold">Style Image</h2>
+          {/* ADDED: relative, overflow-hidden, h-64 */}
+          <div className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition relative overflow-hidden h-64 ${styleFile ? 'border-pink-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}>
+
+            {stylePreview ? (
+              <img src={stylePreview} alt="Style Preview" className="absolute inset-0 w-full h-full object-cover opacity-60" />
+            ) : (
+              <UploadCloud className="w-12 h-12 text-gray-400 z-10 relative" />
+            )}
+
+            <h2 className="text-xl font-semibold z-10 relative drop-shadow-md">Style Image</h2>
+
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => handleFileChange(e, setStyleFile)}
-              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
+              onChange={(e) => handleFileChange(e, setStyleFile, setStylePreview)}
+              className="z-10 relative file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer"
             />
           </div>
         </div>
