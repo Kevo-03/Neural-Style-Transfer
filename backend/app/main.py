@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.db import create_db_and_tables
 from .routers import nst
@@ -19,6 +20,14 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Neural Style Transfer API", 
     lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"], # Allow Next.js
+    allow_credentials=True,
+    allow_methods=["*"], # Allow all methods (POST, GET, etc.)
+    allow_headers=["*"],
 )
 
 app.include_router(nst.router, tags=["Style Transfer"])
