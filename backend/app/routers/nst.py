@@ -72,8 +72,14 @@ def get_image_status(image_id: int ,session: Session = Depends(get_session)):
     if not image:
         raise HTTPException(status_code=400, detail= "Image job not found")
     
+    final_result_url = image.result_path
+    
+    if image.status == "COMPLETED" and image.result_path:
+        filename = os.path.basename(image.result_path)
+        final_result_url = f"http://127.0.0.1:8000/output/{filename}"
+    
     return {
         "id": image.id,
         "status": image.status,
-        "result": image.result_path
-        }
+        "result": final_result_url
+    }

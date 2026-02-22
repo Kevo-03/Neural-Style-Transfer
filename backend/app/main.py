@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.db import create_db_and_tables
 from .routers import nst
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,6 +23,9 @@ app = FastAPI(
     title="Neural Style Transfer API", 
     lifespan=lifespan
 )
+
+os.makedirs("ml_engine/output", exist_ok=True)
+app.mount("/output", StaticFiles(directory="ml_engine/output"), name="output")
 
 app.add_middleware(
     CORSMiddleware,
