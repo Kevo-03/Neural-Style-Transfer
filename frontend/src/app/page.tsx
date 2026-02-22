@@ -1,65 +1,170 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import api from "@/lib/api";
+import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 
 export default function Home() {
+  const [contentFile, setContentFile] = useState<File | null>(null);
+  const [styleFile, setStyleFile] = useState<File | null>(null);
+
+  // UI States
+  const [isUploading, setIsUploading] = useState(false);
+  const [status, setStatus] = useState<string>("IDLE"); // IDLE, UPLOADING, PROCESSING, COMPLETED, FAILED
+  const [resultImage, setResultImage] = useState<string | null>(null);
+
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFile: (f: File) => void
+  ) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  // --- THE NEW PART: POLLING LOGIC ---
+  const pollStatus = async (id: number) => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await api.get(`/status/${id}`);
+        const jobStatus = res.data.status;
+        console.log("Polling...", jobStatus);
+
+        if (jobStatus === "COMPLETED") {
+          clearInterval(interval); // Stop asking!
+          setStatus("COMPLETED");
+          // The backend returns a file path. We need to convert it to a URL.
+          // For now, we'll just log it. (We will fix the URL display in the next step)
+          setResultImage(res.data.result);
+        } else if (jobStatus === "FAILED") {
+          clearInterval(interval);
+          setStatus("FAILED");
+        } else {
+          setStatus("PROCESSING");
+        }
+      } catch (error) {
+        console.error("Polling error", error);
+        clearInterval(interval);
+        setStatus("FAILED");
+      }
+    }, 3000); // Check every 3 seconds
+  };
+
+  const handleUpload = async () => {
+    if (!contentFile || !styleFile) return;
+
+    setIsUploading(true);
+    setStatus("UPLOADING");
+
+    const formData = new FormData();
+    formData.append("content_file", contentFile);
+    formData.append("style_file", styleFile);
+
+    try {
+      const response = await api.post("/generate", formData);
+      const dbId = response.data.database_id;
+
+      setStatus("PROCESSING");
+      pollStatus(dbId); // Start the loop!
+
+    } catch (error) {
+      console.error("Upload failed", error);
+      setStatus("FAILED");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white p-24">
+      <h1 className="text-5xl font-extrabold mb-12 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+        Neural Style Transfer
+      </h1>
+
+      {/* Input Section - Only show if we are NOT done */}
+      {status !== "COMPLETED" && (
+        <div className="grid grid-cols-2 gap-8 w-full max-w-4xl animate-fade-in">
+          {/* Content Image */}
+          <div className={`flex flex-col items-center gap-4 p-8 border-2 border-dashed rounded-xl transition ${contentFile ? 'border-purple-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}>
+            <ImageIcon className="w-12 h-12 text-gray-400" />
+            <h2 className="text-xl font-semibold">Content Image</h2>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e, setContentFile)}
+              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+
+          {/* Style Image */}
+          <div className={`flex flex-col items-center gap-4 p-8 border-2 border-dashed rounded-xl transition ${styleFile ? 'border-pink-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}>
+            <UploadCloud className="w-12 h-12 text-gray-400" />
+            <h2 className="text-xl font-semibold">Style Image</h2>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e, setStyleFile)}
+              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100"
+            />
+          </div>
         </div>
-      </main>
-    </div>
+      )}
+
+      {/* Button / Status Area */}
+      <div className="mt-12">
+        {status === "IDLE" && (
+          <button
+            onClick={handleUpload}
+            disabled={!contentFile || !styleFile}
+            className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Generate Art
+          </button>
+        )}
+
+        {status === "UPLOADING" && (
+          <div className="flex items-center gap-3 text-purple-400 text-xl animate-pulse">
+            <UploadCloud className="w-6 h-6" /> Uploading files...
+          </div>
+        )}
+
+        {status === "PROCESSING" && (
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-3 text-yellow-400 text-xl">
+              <Loader2 className="w-8 h-8 animate-spin" />
+              Painting your masterpiece...
+            </div>
+            <p className="text-sm text-gray-500">This usually takes about 10-20 seconds.</p>
+          </div>
+        )}
+
+        {status === "COMPLETED" && (
+          <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
+            <div className="flex items-center gap-2 text-green-400 text-2xl font-bold">
+              <CheckCircle className="w-8 h-8" /> Done!
+            </div>
+
+            {/* Placeholder for the Result Image */}
+            <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
+              <p className="text-gray-300">Image Path from DB: <br /><code className="text-yellow-500">{resultImage}</code></p>
+              <p className="text-sm text-gray-500 mt-2">(We need to fix the backend to serve this file next!)</p>
+            </div>
+
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition"
+            >
+              Create Another
+            </button>
+          </div>
+        )}
+
+        {status === "FAILED" && (
+          <div className="flex items-center gap-3 text-red-500 text-xl">
+            <AlertCircle className="w-6 h-6" /> Something went wrong. Check the console.
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
