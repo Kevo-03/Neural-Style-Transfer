@@ -43,10 +43,10 @@ def generate_image(
         raise HTTPException(status_code=500, detail=f"File upload failed: {str(ex)}")
     
     new_image = Image(
-        content_path=content_path,
-        style_path=style_path,
+        content_path=content_filename,
+        style_path=style_filename,
         status="PENDING"
-        )
+    )
     
     session.add(new_image)
     session.commit()
@@ -55,7 +55,7 @@ def generate_image(
 
     task = celery_app.send_task(
         "generate_art", 
-        args=[content_path, style_path, output_path, new_image.id]
+        args=[content_filename, style_filename, output_filename, new_image.id]
     )
 
     return {
@@ -75,8 +75,8 @@ def get_image_status(image_id: int ,session: Session = Depends(get_session)):
     final_result_url = image.result_path
     
     if image.status == "COMPLETED" and image.result_path:
-        filename = os.path.basename(image.result_path)
-        final_result_url = f"http://127.0.0.1:8000/output/{filename}"
+    
+        final_result_url = f"http://127.0.0.1:8000/output/{image.result_path}"
     
     return {
         "id": image.id,
