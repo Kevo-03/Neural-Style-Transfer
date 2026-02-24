@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import api from "@/lib/api";
-import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle, AlertCircle, Download } from "lucide-react";
 
 export default function Home() {
   const [contentFile, setContentFile] = useState<File | null>(null);
@@ -120,6 +120,33 @@ export default function Home() {
     }
   };
 
+  const handleDownload = async () => {
+    if (!resultImage) return;
+
+    try {
+      // 1. Fetch the raw binary data of the image from your FastAPI server
+      const response = await fetch(resultImage);
+      const blob = await response.blob();
+
+      // 2. Create a temporary, invisible URL in the browser's memory
+      const url = window.URL.createObjectURL(blob);
+
+      // 3. Create an invisible HTML anchor <a> tag, click it, and remove it
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "neural_art_masterpiece.jpg"; // The name it saves as
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // 4. Clean up the memory
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download image:", error);
+      setErrorMessage("Could not download the image. Please try right-clicking and saving.");
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white p-24">
       <h1 className="text-5xl font-extrabold mb-12 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
@@ -232,7 +259,6 @@ export default function Home() {
               <CheckCircle className="w-8 h-8" /> Done!
             </div>
 
-            {/* THE NEW RESULT IMAGE DISPLAY */}
             {resultImage && (
               <div className="relative p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-2xl">
                 <img
@@ -243,15 +269,25 @@ export default function Home() {
               </div>
             )}
 
-            <button
-              onClick={() => window.location.reload()}
-              className="px-6 py-2 mt-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition font-semibold"
-            >
-              Create Another
-            </button>
+            {/* NEW: Action Buttons Row */}
+            <div className="flex items-center gap-4 mt-4">
+              <button
+                onClick={handleDownload}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:opacity-90 transition font-semibold shadow-lg"
+              >
+                <Download className="w-5 h-5" />
+                Download Art
+              </button>
+
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-3 border border-gray-600 bg-gray-800 rounded-lg hover:bg-gray-700 transition font-semibold"
+              >
+                Create Another
+              </button>
+            </div>
           </div>
         )}
-
         {status === "FAILED" && (
           <div className="flex items-center gap-3 text-red-500 text-xl">
             <AlertCircle className="w-6 h-6" /> Something went wrong. Check the console.
