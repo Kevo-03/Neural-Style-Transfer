@@ -15,6 +15,9 @@ export default function Home() {
   const [isUploading, setIsUploading] = useState(false);
   const [status, setStatus] = useState<string>("IDLE"); // IDLE, UPLOADING, PROCESSING, COMPLETED, FAILED
   const [resultImage, setResultImage] = useState<string | null>(null);
+  const [isDraggingContent, setIsDraggingContent] = useState(false);
+  const [isDraggingStyle, setIsDraggingStyle] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -25,6 +28,7 @@ export default function Home() {
       const file = e.target.files[0];
       setFile(file);
       setPreview(URL.createObjectURL(file));
+      setErrorMessage(null);
     }
   };
 
@@ -81,60 +85,119 @@ export default function Home() {
     }
   };
 
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, setDragging: (b: boolean) => void) => {
+    e.preventDefault(); // Crucial: prevents the browser from opening the file
+    setDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>, setDragging: (b: boolean) => void) => {
+    e.preventDefault();
+    setDragging(false);
+  };
+
+  const handleDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    setFile: (f: File) => void,
+    setPreview: (url: string) => void,
+    setDragging: (b: boolean) => void
+  ) => {
+    e.preventDefault();
+    setDragging(false); // Turn off the highlight effect
+
+    // The files from a drop live in e.dataTransfer, not e.target!
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0];
+
+      // Quick safety check to ensure they dropped an image
+      if (!file.type.startsWith("image/")) {
+        setErrorMessage("Whoops! Please drop a valid image file (JPEG, PNG, etc.).");
+        return;
+      }
+
+      setFile(file);
+      setPreview(URL.createObjectURL(file));
+      setErrorMessage(null);
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-white p-24">
       <h1 className="text-5xl font-extrabold mb-12 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
         Neural Style Transfer
       </h1>
+      {/* Custom Error Message Display */}
+      {errorMessage && (
+        <div className="flex items-center gap-3 w-full max-w-4xl p-4 mb-8 bg-red-900/30 border border-red-500/50 rounded-lg text-red-200 animate-in fade-in slide-in-from-top-4">
+          <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0" />
+          <p className="font-medium">{errorMessage}</p>
+          <button
+            onClick={() => setErrorMessage(null)}
+            className="ml-auto text-red-400 hover:text-red-300 transition"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Input Section - Only show if we are NOT done */}
       {status !== "COMPLETED" && (
         <div className="grid grid-cols-2 gap-8 w-full max-w-4xl animate-fade-in">
 
-          {/* Content Image */}
-          {/* ADDED: relative, overflow-hidden, h-64 */}
-          <div className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition relative overflow-hidden h-64 ${contentFile ? 'border-purple-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}>
-
+          {/* Content Image Box */}
+          <div
+            onDragOver={(e) => handleDragOver(e, setIsDraggingContent)}
+            onDragLeave={(e) => handleDragLeave(e, setIsDraggingContent)}
+            onDrop={(e) => handleDrop(e, setContentFile, setContentPreview, setIsDraggingContent)}
+            className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-64 
+              ${isDraggingContent ? 'border-purple-400 bg-gray-800 scale-[1.02] shadow-[0_0_15px_rgba(168,85,247,0.4)]' :
+                contentFile ? 'border-purple-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}
+          >
             {contentPreview ? (
               <img src={contentPreview} alt="Content Preview" className="absolute inset-0 w-full h-full object-cover opacity-60" />
             ) : (
-              <ImageIcon className="w-12 h-12 text-gray-400 z-10 relative" />
+              <ImageIcon className={`w-12 h-12 z-10 relative transition-colors ${isDraggingContent ? 'text-purple-400' : 'text-gray-400'}`} />
             )}
 
-            {/* ADDED: z-10 relative to keep text above the image */}
             <h2 className="text-xl font-semibold z-10 relative drop-shadow-md">Content Image</h2>
+            <p className="text-sm text-gray-400 z-10 relative font-medium">Drag & drop or click to upload</p>
 
-            {/* ADDED: z-10 relative to keep input clickable */}
             <input
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange(e, setContentFile, setContentPreview)}
-              className="z-10 relative file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 cursor-pointer"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+              title=""
             />
           </div>
 
-          {/* Style Image */}
-          {/* ADDED: relative, overflow-hidden, h-64 */}
-          <div className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition relative overflow-hidden h-64 ${styleFile ? 'border-pink-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}>
-
+          {/* Style Image Box */}
+          <div
+            onDragOver={(e) => handleDragOver(e, setIsDraggingStyle)}
+            onDragLeave={(e) => handleDragLeave(e, setIsDraggingStyle)}
+            onDrop={(e) => handleDrop(e, setStyleFile, setStylePreview, setIsDraggingStyle)}
+            className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-64 
+              ${isDraggingStyle ? 'border-pink-400 bg-gray-800 scale-[1.02] shadow-[0_0_15px_rgba(236,72,153,0.4)]' :
+                styleFile ? 'border-pink-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}
+          >
             {stylePreview ? (
               <img src={stylePreview} alt="Style Preview" className="absolute inset-0 w-full h-full object-cover opacity-60" />
             ) : (
-              <UploadCloud className="w-12 h-12 text-gray-400 z-10 relative" />
+              <UploadCloud className={`w-12 h-12 z-10 relative transition-colors ${isDraggingStyle ? 'text-pink-400' : 'text-gray-400'}`} />
             )}
 
             <h2 className="text-xl font-semibold z-10 relative drop-shadow-md">Style Image</h2>
+            <p className="text-sm text-gray-400 z-10 relative font-medium">Drag & drop or click to upload</p>
 
             <input
               type="file"
               accept="image/*"
               onChange={(e) => handleFileChange(e, setStyleFile, setStylePreview)}
-              className="z-10 relative file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+              title=""
             />
           </div>
         </div>
       )}
-
       {/* Button / Status Area */}
       <div className="mt-12">
         {status === "IDLE" && (
