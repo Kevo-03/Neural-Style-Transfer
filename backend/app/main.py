@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.db import create_db_and_tables
-from .routers import nst
+from .routers import nst, auth
 import os
 
 @asynccontextmanager
@@ -36,6 +36,7 @@ app.add_middleware(
 )
 
 app.include_router(nst.router, tags=["Style Transfer"])
+app.include_router(auth.router, tags=["Authentication"])
 
 @app.get("/")
 def root():
