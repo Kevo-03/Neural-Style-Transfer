@@ -3,7 +3,7 @@ from sqlmodel import Session, select
 from app.models import User
 from app.db import get_session
 from app.schemas import UserCreate, UserResponse
-from app.security import get_password_hash, verify_password
+from app.security import get_password_hash
 
 router = APIRouter()
 

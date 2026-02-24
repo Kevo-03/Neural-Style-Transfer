@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 from app.db import create_db_and_tables
+from app.config import settings
 from .routers import nst, auth
 import os
 
@@ -29,7 +30,7 @@ app.mount("/output", StaticFiles(directory="ml_engine/output"), name="output")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], # Allow Next.js
+    allow_origins=[settings.frontend_url], # Allow Next.js
     allow_credentials=True,
     allow_methods=["*"], # Allow all methods (POST, GET, etc.)
     allow_headers=["*"],

@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from sqlmodel import Session
 from celery import Celery
 from app.db import get_session
+from app.config import settings
 from app.models import Image
 import os
 import uuid
@@ -9,7 +10,7 @@ import shutil
 
 router = APIRouter()
 
-celery_app = Celery("nst_worker", broker="redis://localhost:6379/0")
+celery_app = Celery("nst_worker", broker=settings.redis_url)
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 UPLOAD_DIR = os.path.join(BASE_DIR, "ml_engine", "input")
@@ -76,7 +77,7 @@ def get_image_status(image_id: int ,session: Session = Depends(get_session)):
     
     if image.status == "COMPLETED" and image.result_path:
     
-        final_result_url = f"http://127.0.0.1:8000/output/{image.result_path}"
+        final_result_url = f"{settings.backend_url}/output/{image.result_path}"
     
     return {
         "id": image.id,

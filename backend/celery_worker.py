@@ -3,6 +3,7 @@ from celery import Celery
 from ml_engine.inference import run_inference
 from app.db import engine
 from app.models import Image
+from app.config import settings
 from sqlmodel import Session
 import os
 
@@ -13,8 +14,8 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "ml_engine", "output")
 # 'redis://localhost:6379/0' is the standard local Redis address
 celery_app = Celery(
     "nst_worker",
-    broker="redis://localhost:6379/0",
-    backend="redis://localhost:6379/0"
+    broker=settings.redis_url,  # Use the Redis URL from settings
+    backend=settings.redis_url
 )
 
 # 2. Define the Task
