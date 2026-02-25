@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Depends, status
-from sqlmodel import Session
+from sqlmodel import Session, select, desc
 from celery import Celery
 from app.db import get_session
 from app.config import settings
@@ -93,3 +93,18 @@ def get_image_status(image_id: int ,session: Session = Depends(get_session), cur
         "status": image.status,
         "result": final_result_url
     }
+
+@router.get("/library")
+def get_user_library(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+    
+    statement = select(Image).where(Image.user_id == current_user.id).order_by(desc(Image.created_at))
+    images = session.exec(statement).all()
+    
+    return [
+        {
+            "id": image.id,
+            "status": image.status,
+            "result": f"{settings.backend_url}/output/{image.result_path}" if image.result_path else None
+        }
+        for image in images
+    ]
