@@ -13,7 +13,7 @@ from typing import Annotated
 router = APIRouter(prefix="/auth")
 
 @router.post("/signup", response_model=UserResponse)
-def create_user(user: UserCreate, session: Session = Depends(get_session)):
+def create_user(user: UserCreate, session: Annotated[Session, Depends(get_session)]):
 
     statement = select(User).where(User.email == user.email)
     existing_user = session.exec(statement).first()
@@ -35,7 +35,7 @@ def create_user(user: UserCreate, session: Session = Depends(get_session)):
 def login(
     # UPGRADED: Using the modern Annotated standard
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
-    session: Session = Depends(get_session)
+    session: Annotated[Session, Depends(get_session)]
 ):
     statement = select(User).where(User.email == form_data.username)
     user = session.exec(statement).first()

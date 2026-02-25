@@ -5,6 +5,7 @@ from app.db import get_session
 from app.config import settings
 from app.models import Image, User
 from app.dependencies import get_current_user
+from typing import Annotated
 import os
 import uuid
 import shutil
@@ -22,10 +23,10 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 @router.post("/generate")
 def generate_image(
-    content_file: UploadFile = File(...),
-    style_file: UploadFile = File(...),
-    session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
+    content_file: Annotated[UploadFile, File(...)],
+    style_file: Annotated[UploadFile, File(...)],
+    session: Annotated[Session, Depends(get_session)],
+    current_user: Annotated[User, Depends(get_current_user)]
     ):
 
     job_id = str(uuid.uuid4())
@@ -70,7 +71,7 @@ def generate_image(
     }
 
 @router.get("/status/{image_id}")
-def get_image_status(image_id: int ,session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+def get_image_status(image_id: int ,session: Annotated[Session, Depends(get_session)], current_user: Annotated[User, Depends(get_current_user)]):
     image = session.get(Image, image_id)
 
     if not image:
@@ -95,7 +96,7 @@ def get_image_status(image_id: int ,session: Session = Depends(get_session), cur
     }
 
 @router.get("/library")
-def get_user_library(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
+def get_user_library(session: Annotated[Session, Depends(get_session)], current_user: Annotated[User, Depends(get_current_user)]):
     
     statement = select(Image).where(Image.user_id == current_user.id).order_by(desc(Image.created_at))
     images = session.exec(statement).all()
