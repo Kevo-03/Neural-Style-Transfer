@@ -1,16 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { useAuth } from "@/context/AuthContext"; // Adjust path if needed
+import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react"; // Added for the spinning effect!
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const { login, isAuthenticated, isCheckingAuth } = useAuth();
+    const router = useRouter();
 
-    // Bring in the login function from our Brain!
-    const { login } = useAuth();
+    useEffect(() => {
+        // If we are done checking, and they ARE logged in, kick them to the library!
+        if (!isCheckingAuth && isAuthenticated) {
+            router.push("/library");
+        }
+    }, [isAuthenticated, isCheckingAuth, router]);
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,7 +28,6 @@ export default function LoginPage() {
         setError("");
 
         try {
-            // This calls your FastAPI /auth/login route
             await login(email, password);
         } catch (err) {
             setError("Invalid email or password. Please try again.");
@@ -28,25 +37,27 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50">
-            <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-lg">
+        <div className="flex min-h-screen items-center justify-center bg-gray-900 px-4">
+            <div className="w-full max-w-md space-y-8 rounded-2xl border border-gray-700 bg-gray-800 p-8 shadow-2xl">
                 <div>
-                    <h2 className="text-center text-3xl font-extrabold text-gray-900">
-                        Sign in to your account
+                    <h2 className="text-center text-3xl font-extrabold text-white">
+                        Welcome Back
                     </h2>
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
-                        <div className="text-red-500 text-sm text-center">{error}</div>
+                        <div className="rounded-lg bg-red-900/30 p-3 border border-red-500/50 text-red-200 text-sm text-center">
+                            {error}
+                        </div>
                     )}
 
-                    <div className="space-y-4 rounded-md shadow-sm">
+                    <div className="space-y-4">
                         <div>
                             <input
                                 type="email"
                                 required
-                                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
                                 placeholder="Email address"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -56,7 +67,7 @@ export default function LoginPage() {
                             <input
                                 type="password"
                                 required
-                                className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                                className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -68,9 +79,16 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-400"
+                            className="group relative flex w-full justify-center items-center rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 text-sm font-bold text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                         >
-                            {isLoading ? "Signing in..." : "Sign in"}
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                    Signing in...
+                                </>
+                            ) : (
+                                "Sign in"
+                            )}
                         </button>
                     </div>
                 </form>

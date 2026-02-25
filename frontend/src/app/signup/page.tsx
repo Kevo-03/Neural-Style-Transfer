@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import Link from "next/link"; // For linking back to the login page
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
 
 export default function SignupPage() {
     const [email, setEmail] = useState("");
@@ -10,8 +13,16 @@ export default function SignupPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const { signup, isAuthenticated, isCheckingAuth } = useAuth();
+    const router = useRouter();
 
-    const { signup } = useAuth();
+    useEffect(() => {
+        // If we are done checking, and they ARE logged in, kick them to the library!
+        if (!isCheckingAuth && isAuthenticated) {
+            router.push("/library");
+        }
+    }, [isAuthenticated, isCheckingAuth, router]);
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,7 +37,6 @@ export default function SignupPage() {
 
         try {
             await signup(email, password);
-            // The context handles the redirect to /library after logging them in!
         } catch (err) {
             setError("Could not create account. Email might already exist.");
         } finally {
@@ -35,24 +45,26 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50">
-            <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-lg">
+        <div className="flex min-h-screen items-center justify-center bg-gray-900 px-4">
+            <div className="w-full max-w-md space-y-8 rounded-2xl border border-gray-700 bg-gray-800 p-8 shadow-2xl">
                 <div>
-                    <h2 className="text-center text-3xl font-extrabold text-gray-900">
-                        Create an account
+                    <h2 className="text-center text-3xl font-extrabold text-white">
+                        Create an Account
                     </h2>
                 </div>
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
-                        <div className="text-red-500 text-sm text-center">{error}</div>
+                        <div className="rounded-lg bg-red-900/30 p-3 border border-red-500/50 text-red-200 text-sm text-center">
+                            {error}
+                        </div>
                     )}
 
-                    <div className="space-y-4 rounded-md shadow-sm">
+                    <div className="space-y-4">
                         <input
                             type="email"
                             required
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                            className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
                             placeholder="Email address"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -60,7 +72,7 @@ export default function SignupPage() {
                         <input
                             type="password"
                             required
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                            className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -68,7 +80,7 @@ export default function SignupPage() {
                         <input
                             type="password"
                             required
-                            className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                            className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
                             placeholder="Confirm Password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -79,16 +91,23 @@ export default function SignupPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-indigo-400"
+                            className="group relative flex w-full justify-center items-center rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 text-sm font-bold text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                         >
-                            {isLoading ? "Creating..." : "Sign up"}
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                    Creating...
+                                </>
+                            ) : (
+                                "Sign up"
+                            )}
                         </button>
                     </div>
                 </form>
 
-                <div className="text-center text-sm">
+                <div className="text-center text-sm text-gray-400">
                     Already have an account?{" "}
-                    <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    <Link href="/login" className="font-semibold text-purple-400 hover:text-pink-400 transition">
                         Log in here
                     </Link>
                 </div>

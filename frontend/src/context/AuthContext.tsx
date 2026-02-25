@@ -72,9 +72,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // 3. The Logout Function
     const logout = () => {
+        // 1. Wipe the token from the browser's storage
         localStorage.removeItem("token");
-        setIsAuthenticated(false);
-        router.push("/login"); // Send them back to the login page
+        window.location.href = "/login";
     };
 
     return (
