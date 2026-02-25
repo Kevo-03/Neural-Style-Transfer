@@ -10,7 +10,7 @@ from datetime import timedelta
 from typing import Annotated
 
 
-router = APIRouter()
+router = APIRouter(prefix="/auth")
 
 @router.post("/signup", response_model=UserResponse)
 def create_user(user: UserCreate, session: Session = Depends(get_session)):

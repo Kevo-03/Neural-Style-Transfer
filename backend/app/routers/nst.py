@@ -1,9 +1,10 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Depends, status
 from sqlmodel import Session
 from celery import Celery
 from app.db import get_session
 from app.config import settings
-from app.models import Image
+from app.models import Image, User
+from app.dependencies import get_current_user
 import os
 import uuid
 import shutil
@@ -23,7 +24,8 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 def generate_image(
     content_file: UploadFile = File(...),
     style_file: UploadFile = File(...),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
     ):
 
     job_id = str(uuid.uuid4())
@@ -46,7 +48,8 @@ def generate_image(
     new_image = Image(
         content_path=content_filename,
         style_path=style_filename,
-        status="PENDING"
+        status="PENDING",
+        user_id=current_user.id
     )
     
     session.add(new_image)
@@ -67,11 +70,17 @@ def generate_image(
     }
 
 @router.get("/status/{image_id}")
-def get_image_status(image_id: int ,session: Session = Depends(get_session)):
+def get_image_status(image_id: int ,session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     image = session.get(Image, image_id)
 
     if not image:
         raise HTTPException(status_code=400, detail= "Image job not found")
+    
+    if image.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="You do not have permission to view this image"
+        )
     
     final_result_url = image.result_path
     
