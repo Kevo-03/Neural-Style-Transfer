@@ -34,6 +34,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"], # Allow all methods (POST, GET, etc.)
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 app.include_router(nst.router, tags=["Style Transfer"])

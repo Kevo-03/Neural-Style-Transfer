@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
 
 interface ImageJob {
     id: number;
@@ -43,6 +43,28 @@ export default function LibraryPage() {
 
         fetchLibrary();
     }, [isAuthenticated]);
+
+    const handleDownload = async (imageUrl: string, img_id: number) => {
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+
+            a.download = `neural_art_${img_id}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Failed to download image:", error);
+            // Optionally, you could set an error state here to show a toast notification
+            alert("Could not download the image. Please try right-clicking and saving.");
+        }
+    };
 
     if (isCheckingAuth) {
         return (
@@ -100,6 +122,15 @@ export default function LibraryPage() {
                                         {img.status.toLowerCase()}
                                     </p>
                                 </div>
+                                {img.status === "COMPLETED" && img.result && (
+                                    <button
+                                        onClick={() => handleDownload(img.result!, img.id)}
+                                        className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 transition"
+                                        title="Download Image"
+                                    >
+                                        <Download className="w-5 h-5" />
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>

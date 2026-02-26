@@ -63,8 +63,6 @@ export default function GeneratePage() {
                 if (jobStatus === "COMPLETED") {
                     clearInterval(interval); // Stop asking!
                     setStatus("COMPLETED");
-                    // The backend returns a file path. We need to convert it to a URL.
-                    // For now, we'll just log it. (We will fix the URL display in the next step)
                     setResultImage(res.data.result);
                 } else if (jobStatus === "FAILED") {
                     clearInterval(interval);
