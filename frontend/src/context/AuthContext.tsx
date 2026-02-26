@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logout = () => {
         // 1. Wipe the token from the browser's storage
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        window.location.href = "/";
     };
 
     return (
