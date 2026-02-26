@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response ,status
 from sqlmodel import Session, select
 from app.models import User
 from app.db import get_session
@@ -8,6 +8,7 @@ from app.security import get_password_hash, create_access_token, verify_password
 from app.config import settings
 from datetime import timedelta
 from typing import Annotated
+from config import settings
 
 
 router = APIRouter(prefix="/auth")
@@ -33,7 +34,7 @@ def create_user(user: UserCreate, session: Annotated[Session, Depends(get_sessio
 
 @router.post("/login", response_model=Token)
 def login(
-    # UPGRADED: Using the modern Annotated standard
+    response: Response,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
     session: Annotated[Session, Depends(get_session)]
 ):
@@ -55,5 +56,21 @@ def login(
         data={"sub": user.email}, 
         expires_delta=access_token_expires
     )
-    
-    return {"access_token": access_token, "token_type": "bearer"}
+
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,   # JavaScript cannot read this (highly secure)
+        secure=False,    # Set to True in production (HTTPS)
+        samesite="lax",  # Protects against CSRF attacks
+        max_age=settings.access_token_expire_minutes * 60 # 30 minutes (match your token expiration)
+    )
+
+    return {"message": "Successfully logged in"}
+
+
+@router.post("/logout")
+def logout(response: Response):
+    # 3. Create a logout endpoint to destroy the cookie
+    response.delete_cookie("access_token")
+    return {"message": "Successfully logged out"}
