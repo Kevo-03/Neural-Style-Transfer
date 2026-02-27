@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
-import { Loader2, Download } from "lucide-react";
+import { Loader2, Download, Trash2, AlertCircle } from "lucide-react";
 
 interface ImageJob {
     id: number;
@@ -15,6 +15,8 @@ export default function LibraryPage() {
     const [images, setImages] = useState<ImageJob[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+    const [imageToDelete, setImageToDelete] = useState<number | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchLibrary = async () => {
@@ -51,6 +53,26 @@ export default function LibraryPage() {
             console.error("Failed to download image:", error);
             // Optionally, you could set an error state here to show a toast notification
             alert("Could not download the image. Please try right-clicking and saving.");
+        }
+    };
+
+    const handleDeleteClick = (img_id: number) => {
+        setImageToDelete(img_id);
+    };
+
+    const confirmDelete = async () => {
+        if (!imageToDelete) return;
+
+        setIsDeleting(true);
+        try {
+            await api.delete(`/library/${imageToDelete}`);
+            setImages((prevImages) => prevImages.filter((img) => img.id !== imageToDelete));
+            setImageToDelete(null);
+        } catch (error) {
+            console.error("Failed to delete image:", error);
+            alert("Could not delete the image. Please try again.");
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -110,11 +132,61 @@ export default function LibraryPage() {
                                         <Download className="w-5 h-5" />
                                     </button>
                                 )}
+                                <button
+                                    onClick={() => handleDeleteClick(img.id)}
+                                    className="p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-900/30 transition"
+                                    title="Delete Image"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
                             </div>
                         ))}
                     </div>
                 )}
             </div>
+            {imageToDelete !== null && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+                    <div className="w-full max-w-sm rounded-2xl bg-gray-800 border border-gray-700 p-6 shadow-2xl animate-in zoom-in-95 fade-in duration-200">
+
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-3 bg-red-900/30 rounded-full text-red-500">
+                                <AlertCircle className="w-6 h-6" />
+                            </div>
+                            <h3 className="text-xl font-bold text-white">Delete Image?</h3>
+                        </div>
+
+                        <p className="text-gray-400 text-sm mb-6">
+                            Are you sure you want to delete this masterpiece? This action will permanently remove it from your library and cannot be undone.
+                        </p>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setImageToDelete(null)}
+                                disabled={isDeleting}
+                                className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-300 hover:bg-gray-700 hover:text-white transition disabled:opacity-50"
+                            >
+                                Cancel
+                            </button>
+
+                            <button
+                                onClick={confirmDelete}
+                                disabled={isDeleting}
+                                className="flex items-center px-4 py-2 rounded-lg text-sm font-bold bg-red-600 text-white hover:bg-red-700 transition shadow-lg shadow-red-900/20 disabled:opacity-50"
+                            >
+                                {isDeleting ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                        Deleting...
+                                    </>
+                                ) : (
+                                    "Yes, Delete"
+                                )}
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
