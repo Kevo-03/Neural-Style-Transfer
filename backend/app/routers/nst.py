@@ -4,6 +4,7 @@ from celery import Celery
 from app.db import get_session
 from app.config import settings
 from app.models import Image, User
+from app.schemas import ImageLibraryResponse
 from app.dependencies import get_current_user
 from typing import Annotated
 import os
@@ -95,7 +96,7 @@ def get_image_status(image_id: int ,session: Annotated[Session, Depends(get_sess
         "result": final_result_url
     }
 
-@router.get("/library")
+@router.get("/library", response_model=list[ImageLibraryResponse])
 def get_user_library(session: Annotated[Session, Depends(get_session)], current_user: Annotated[User, Depends(get_current_user)]):
     
     statement = select(Image).where(Image.user_id == current_user.id).order_by(desc(Image.created_at))

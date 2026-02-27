@@ -67,6 +67,7 @@ def login(
         max_age=settings.access_token_expire_minutes * 60 # 30 minutes (match your token expiration)
     )
 
+    return {"message": "Successfully logged in"}
 
 
 @router.post("/logout")
