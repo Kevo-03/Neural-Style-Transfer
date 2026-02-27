@@ -41,3 +41,25 @@ async def upload_to_spaces(file: UploadFile, folder: str = "uploads") -> str:
     except Exception as e:
         print(f"Cloud upload failed: {e}")
         return None
+    
+async def delete_from_spaces(file_url: str):
+    """
+    Extracts the key from a DigitalOcean Spaces URL and deletes the object.
+    """
+    if not file_url:
+        return
+
+    # Calculate what the base domain looks like so we can remove it
+    base_domain = f"https://{settings.do_space_name}.{settings.do_space_region}.cdn.digitaloceanspaces.com/"
+    
+    try:
+        if file_url.startswith(base_domain):
+            # Strip the domain to get just the key (e.g., "results/uuid.jpg")
+            file_key = file_url.replace(base_domain, "")
+            
+            # Delete it from the bucket
+            s3_client.delete_object(Bucket=settings.do_space_name, Key=file_key)
+            print(f"Successfully deleted {file_key} from cloud storage.")
+            
+    except Exception as e:
+        print(f"Failed to delete {file_url} from cloud: {e}")

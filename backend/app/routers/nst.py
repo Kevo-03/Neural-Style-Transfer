@@ -7,21 +7,13 @@ from app.models import Image, User
 from app.schemas import ImageLibraryResponse
 from app.dependencies import get_current_user
 from app.storage import upload_to_spaces
+from app.storage import delete_from_spaces
 from typing import Annotated
 import os
-import uuid
-import shutil
 
 router = APIRouter()
 
 celery_app = Celery("nst_worker", broker=settings.redis_url)
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-UPLOAD_DIR = os.path.join(BASE_DIR, "ml_engine", "input")
-OUTPUT_DIR = os.path.join(BASE_DIR, "ml_engine", "output")
-
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 @router.post("/generate")
 async def generate_image(  # 👈 MUST be async now!
@@ -83,14 +75,10 @@ def get_image_status(image_id: int ,session: Annotated[Session, Depends(get_sess
     
     final_result_url = image.result_path
     
-    if image.status == "COMPLETED" and image.result_path:
-    
-        final_result_url = f"{settings.backend_url}/output/{image.result_path}"
-    
     return {
         "id": image.id,
         "status": image.status,
-        "result": final_result_url
+        "result": image.result_path 
     }
 
 @router.get("/library", response_model=list[ImageLibraryResponse])
@@ -103,25 +91,38 @@ def get_user_library(session: Annotated[Session, Depends(get_session)], current_
         {
             "id": image.id,
             "status": image.status,
-            "result": f"{settings.backend_url}/output/{image.result_path}" if image.result_path else None
+            "result": image.result_path 
         }
         for image in images
     ]
 
 @router.delete("/library/{image_id}")
-def delete_image(image_id: int, session: Annotated[Session, Depends(get_session)], current_user: Annotated[User, Depends(get_current_user)]):
+async def delete_image(  # 👈 MUST be async now
+    image_id: int, 
+    session: Annotated[Session, Depends(get_session)], 
+    current_user: Annotated[User, Depends(get_current_user)]
+):
     image = session.get(Image, image_id)
+    
     if not image:
         raise HTTPException(status_code=404, detail="Image not found")
+        
     if image.user_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to delete this image"
         )
+        
+    # 1. Delete all associated images from the cloud bucket
     if image.result_path:
-        output_path = os.path.join(OUTPUT_DIR, image.result_path)
-        if os.path.exists(output_path):
-            os.remove(output_path)
+        await delete_from_spaces(image.result_path)
+    if image.content_path:
+        await delete_from_spaces(image.content_path)
+    if image.style_path:
+        await delete_from_spaces(image.style_path)
+
+    # 2. Delete the record from the database
     session.delete(image)
     session.commit()
-    return {"message": "Image deleted successfully"}
+    
+    return {"message": "Image and cloud files deleted successfully"}
