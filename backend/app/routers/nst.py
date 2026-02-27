@@ -110,3 +110,20 @@ def get_user_library(session: Annotated[Session, Depends(get_session)], current_
         for image in images
     ]
 
+@router.delete("/library/{image_id}")
+def delete_image(image_id: int, session: Annotated[Session, Depends(get_session)], current_user: Annotated[User, Depends(get_current_user)]):
+    image = session.get(Image, image_id)
+    if not image:
+        raise HTTPException(status_code=404, detail="Image not found")
+    if image.user_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to delete this image"
+        )
+    if image.result_path:
+        output_path = os.path.join(OUTPUT_DIR, image.result_path)
+        if os.path.exists(output_path):
+            os.remove(output_path)
+    session.delete(image)
+    session.commit()
+    return {"message": "Image deleted successfully"}
