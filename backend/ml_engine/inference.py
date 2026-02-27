@@ -3,6 +3,8 @@ import tensorflow_hub as hub
 import numpy as np
 from PIL import Image
 import os
+import io
+from PIL import Image
 
 # --- 1. SETUP GLOBAL VARIABLES (The Fix) ---
 # We do NOT load the model here anymore. We just define the URL.
@@ -21,10 +23,9 @@ def get_model():
         print("✅ Model Loaded!")
     return hub_model
 
-def load_img(path_to_img):
+def load_img(img_bytes: bytes):
     max_dim = 512
-    img = tf.io.read_file(path_to_img)
-    img = tf.image.decode_image(img, channels=3)
+    img = tf.image.decode_image(img_bytes, channels=3)
     img = tf.image.convert_image_dtype(img, tf.float32)
 
     shape = tf.cast(tf.shape(img)[:-1], tf.float32)
@@ -44,28 +45,39 @@ def tensor_to_image(tensor):
         tensor = tensor[0]
     return Image.fromarray(tensor)
 
-def run_inference(content_path, style_path, output_path):
-    print(f"Processing: {content_path}")
-    
-    # --- 2. LOAD MODEL ON DEMAND ---
+def run_inference(content_bytes: bytes, style_bytes: bytes) -> io.BytesIO:
+   
     model = get_model()
-    # -------------------------------
 
-    content_image = load_img(content_path)
-    style_image = load_img(style_path)
+    content_img = load_img(content_bytes)
+    style_img = load_img(style_bytes)
 
-    outputs = model(tf.constant(content_image), tf.constant(style_image))
+    outputs = model(tf.constant(content_img), tf.constant(style_img))
     stylized_image = outputs[0]
 
     result = tensor_to_image(stylized_image)
-    
-    # Ensure output directory exists
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    
-    result.save(output_path)
-    print(f"Saved to {output_path}")
-    return output_path
+    output_buffer = io.BytesIO()
+    result.save(output_buffer, format="JPEG")
+    output_buffer.seek(0)
+    print("In-memory processing complete!")
+    return output_buffer
 
 if __name__ == "__main__":
     # Test Block
-    run_inference("input/content.jpg", "input/style.jpg", "output/output.jpg")
+    print("Testing in-memory pipeline...")
+    
+    try:
+        with open("input/content.jpg", "rb") as f:
+            c_bytes = f.read()
+        with open("input/style.jpg", "rb") as f:
+            s_bytes = f.read()
+            
+        out_stream = run_inference(c_bytes, s_bytes)
+        
+        # Save the stream out to disk just to verify it worked locally
+        with open("output/test_result.jpg", "wb") as f:
+            f.write(out_stream.read())
+            
+        print("✅ Success! Test image saved to output/test_result.jpg")
+    except FileNotFoundError:
+        print("Test skipped: Ensure you have 'input/content.jpg' and 'input/style.jpg' to run the local test.")

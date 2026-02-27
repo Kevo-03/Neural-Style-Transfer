@@ -6,6 +6,7 @@ from app.config import settings
 from app.models import Image, User
 from app.schemas import ImageLibraryResponse
 from app.dependencies import get_current_user
+from app.storage import upload_to_spaces
 from typing import Annotated
 import os
 import uuid
@@ -23,33 +24,27 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 @router.post("/generate")
-def generate_image(
+async def generate_image(  # 👈 MUST be async now!
     content_file: Annotated[UploadFile, File(...)],
     style_file: Annotated[UploadFile, File(...)],
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(get_current_user)]
-    ):
+):
+    # 1. Upload files directly to DigitalOcean Spaces
+    content_url = await upload_to_spaces(content_file, folder="content")
+    style_url = await upload_to_spaces(style_file, folder="style")
 
-    job_id = str(uuid.uuid4())
-    content_filename = f"{job_id}_content.jpg"
-    style_filename = f"{job_id}_style.jpg"
-    output_filename = f"{job_id}_result.jpg"
-
-    content_path = os.path.join(UPLOAD_DIR, content_filename)
-    style_path = os.path.join(UPLOAD_DIR, style_filename)
-    output_path = os.path.join(OUTPUT_DIR, output_filename)
-
-    try:
-        with open(content_path, "wb") as buffer:
-            shutil.copyfileobj(content_file.file, buffer)
-        with open(style_path, "wb") as buffer:
-            shutil.copyfileobj(style_file.file, buffer)
-    except Exception as ex:
-        raise HTTPException(status_code=500, detail=f"File upload failed: {str(ex)}")
+    # 2. Safety check: Ensure both uploads succeeded
+    if not content_url or not style_url:
+        raise HTTPException(
+            status_code=500, 
+            detail="Failed to upload images to cloud storage. Please try again."
+        )
     
+    # 3. Save the full cloud URLs to the database, not local paths
     new_image = Image(
-        content_path=content_filename,
-        style_path=style_filename,
+        content_path=content_url,
+        style_path=style_url,
         status="PENDING",
         user_id=current_user.id
     )
@@ -58,17 +53,19 @@ def generate_image(
     session.commit()
     session.refresh(new_image)
 
-
+    # 4. Trigger Celery worker
+    # Notice we updated the args! The worker just needs the URLs and the ID now.
     task = celery_app.send_task(
         "generate_art", 
-        args=[content_filename, style_filename, output_filename, new_image.id]
+        args=[content_url, style_url, new_image.id]
     )
 
     return {
-        "job_id": job_id,
+        "job_id": task.id, # You can just use the Celery task ID as the job ID now
         "database_id": new_image.id,
         "status": "submitted", 
-        "task_id": task.id
+        "task_id": task.id,
+        "message": "Images uploaded to cloud successfully. Processing started."
     }
 
 @router.get("/status/{image_id}")

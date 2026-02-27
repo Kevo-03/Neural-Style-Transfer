@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     frontend_url: str
     backend_url: str
 
+    do_space_name: str
+    do_space_region: str
+    do_access_key: str
+    do_secret_key: str
+
     model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()
