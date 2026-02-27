@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
-import { Loader2 } from "lucide-react"; // Added for the spinning effect!
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -83,6 +84,12 @@ export default function LoginPage() {
                         </button>
                     </div>
                 </form>
+                <div className="text-center text-sm text-gray-400 mt-4">
+                    Don't have an account?{" "}
+                    <Link href="/signup" className="font-semibold text-purple-400 hover:text-pink-400 transition">
+                        Sign up here
+                    </Link>
+                </div>
             </div>
         </div>
     );
