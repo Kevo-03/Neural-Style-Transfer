@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { Loader2, Download } from "lucide-react";
 
@@ -18,6 +16,21 @@ export default function LibraryPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
+    useEffect(() => {
+        const fetchLibrary = async () => {
+            try {
+                const response = await api.get("/library");
+                setImages(response.data);
+            } catch (err) {
+                console.error("Failed to fetch library", err);
+                setError("Could not load your images.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchLibrary();
+    }, []);
 
     const handleDownload = async (imageUrl: string, img_id: number) => {
         try {
