@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
-import { Loader2, Download, Trash2, AlertCircle } from "lucide-react";
+import { Loader2, Download, Trash2, AlertCircle, X } from "lucide-react";
 
 interface ImageJob {
     id: number;
@@ -17,6 +17,7 @@ export default function LibraryPage() {
     const [error, setError] = useState("");
     const [imageToDelete, setImageToDelete] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchLibrary = async () => {
@@ -33,6 +34,15 @@ export default function LibraryPage() {
 
         fetchLibrary();
     }, []);
+
+    useEffect(() => {
+        if (toastMessage) {
+            const timer = setTimeout(() => {
+                setToastMessage(null);
+            }, 3000); // Disappears after 3 seconds
+            return () => clearTimeout(timer); // Cleanup if the component unmounts
+        }
+    }, [toastMessage]);
 
     const handleDownload = async (imageUrl: string, img_id: number) => {
         try {
@@ -52,7 +62,7 @@ export default function LibraryPage() {
         } catch (error) {
             console.error("Failed to download image:", error);
             // Optionally, you could set an error state here to show a toast notification
-            alert("Could not download the image. Please try right-clicking and saving.");
+            setToastMessage("Could not download the image. Please try right-clicking and saving.");
         }
     };
 
@@ -70,7 +80,7 @@ export default function LibraryPage() {
             setImageToDelete(null);
         } catch (error) {
             console.error("Failed to delete image:", error);
-            alert("Could not delete the image. Please try again.");
+            setToastMessage("Could not delete the image. Please try again.");
         } finally {
             setIsDeleting(false);
         }
@@ -185,6 +195,18 @@ export default function LibraryPage() {
                         </div>
 
                     </div>
+                </div>
+            )}
+            {toastMessage && (
+                <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-red-900/90 border border-red-500/50 text-red-200 px-4 py-3 rounded-lg shadow-2xl backdrop-blur-md animate-in slide-in-from-bottom-5 fade-in duration-300">
+                    <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+                    <p className="text-sm font-medium">{toastMessage}</p>
+                    <button
+                        onClick={() => setToastMessage(null)}
+                        className="ml-2 text-red-400 hover:text-white transition"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
                 </div>
             )}
         </div>
