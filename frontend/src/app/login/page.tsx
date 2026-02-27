@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+
 import { Loader2 } from "lucide-react"; // Added for the spinning effect!
 
 export default function LoginPage() {
@@ -11,15 +10,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { login, isAuthenticated, isCheckingAuth } = useAuth();
-    const router = useRouter();
-
-    useEffect(() => {
-        // If we are done checking, and they ARE logged in, kick them to the library!
-        if (!isCheckingAuth && isAuthenticated) {
-            router.push("/library");
-        }
-    }, [isAuthenticated, isCheckingAuth, router]);
+    const { login } = useAuth();
 
 
     const handleSubmit = async (e: React.FormEvent) => {

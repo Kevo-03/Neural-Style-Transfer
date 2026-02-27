@@ -1,30 +1,35 @@
 from typing import Annotated
 import jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, Request ,status
 from sqlmodel import Session, select
 
 from app.db import get_session
 from app.models import User
 from app.config import settings
 
-# 1. THE BOUNCER'S INSTRUCTIONS
-# We tell OAuth2PasswordBearer the exact URL where users go to get their tokens.
-# This helps FastAPI automatically wire up the Swagger UI lock buttons!
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
+
 
 # 2. THE VALIDATION FUNCTION
 def get_current_user(
     # FastAPI automatically extracts the token from the 'Authorization' header
-    token: Annotated[str, Depends(oauth2_scheme)], 
+    request: Request, 
     session: Session = Depends(get_session)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        detail="Could not validate credentials"
     )
     
+    cookie_token = request.cookies.get("access_token")
+    
+    if not cookie_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated"
+        )
+        
+    token = cookie_token.replace("Bearer ", "")
+
     try:
         # Step A: Mathematically decode the token using your secret key
         payload = jwt.decode(

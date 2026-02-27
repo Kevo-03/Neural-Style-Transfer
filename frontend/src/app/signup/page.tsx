@@ -13,16 +13,7 @@ export default function SignupPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { signup, isAuthenticated, isCheckingAuth } = useAuth();
-    const router = useRouter();
-
-    useEffect(() => {
-        // If we are done checking, and they ARE logged in, kick them to the library!
-        if (!isCheckingAuth && isAuthenticated) {
-            router.push("/library");
-        }
-    }, [isAuthenticated, isCheckingAuth, router]);
-
+    const { signup } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

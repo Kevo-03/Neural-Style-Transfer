@@ -13,36 +13,11 @@ interface ImageJob {
 }
 
 export default function LibraryPage() {
-    const { isAuthenticated, isCheckingAuth } = useAuth();
-    const router = useRouter();
 
     const [images, setImages] = useState<ImageJob[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        if (!isAuthenticated && !isCheckingAuth) {
-            router.push("/login");
-        }
-    }, [isAuthenticated, isCheckingAuth, router]);
-
-    useEffect(() => {
-        const fetchLibrary = async () => {
-            if (!isAuthenticated) return;
-
-            try {
-                const response = await api.get("/library");
-                setImages(response.data);
-            } catch (err) {
-                console.error("Failed to fetch library", err);
-                setError("Could not load your images.");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchLibrary();
-    }, [isAuthenticated]);
 
     const handleDownload = async (imageUrl: string, img_id: number) => {
         try {
@@ -66,15 +41,6 @@ export default function LibraryPage() {
         }
     };
 
-    if (isCheckingAuth) {
-        return (
-            <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
-                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
-            </div>
-        );
-    }
-
-    if (!isAuthenticated) return null;
 
     return (
         <div className="min-h-screen bg-gray-900 px-4 py-12 sm:px-6 lg:px-8">

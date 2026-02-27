@@ -21,11 +21,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // 1. Check for the token when the app first loads
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setIsAuthenticated(true);
-        }
-        setIsCheckingAuth(false);
+        const verifyAuth = async () => {
+            try {
+                // If this succeeds, the browser automatically sent a valid cookie
+                await api.get("/auth/me");
+                setIsAuthenticated(true);
+            } catch (error) {
+                // If it fails (401), the cookie is missing or expired
+                setIsAuthenticated(false);
+            } finally {
+                setIsCheckingAuth(false);
+            }
+        };
+
+        verifyAuth();
     }, []);
 
     const signup = async (email: string, password: string) => {
@@ -54,16 +63,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         formData.append("password", password);
 
         try {
-            const response = await api.post("/auth/login", formData, {
+            await api.post("/auth/login", formData, {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
             });
 
-            // Save the VIP pass to localStorage
-            localStorage.setItem("token", response.data.access_token);
-            setIsAuthenticated(true);
-
-            // Send them straight to their gallery
-            router.push("/generate");
+            window.location.href = "/library";
         } catch (error) {
             console.error("Login failed", error);
             throw error; // Let the UI handle displaying the error message
@@ -71,9 +75,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     // 3. The Logout Function
-    const logout = () => {
+    const logout = async () => {
         // 1. Wipe the token from the browser's storage
-        localStorage.removeItem("token");
+        await api.post("/auth/logout"); // Invalidate the token on the server side (optional but good practice)
         window.location.href = "/";
     };
 

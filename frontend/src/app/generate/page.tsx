@@ -2,13 +2,10 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import api from "@/lib/api";
 import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle, AlertCircle, Download } from "lucide-react";
 
 export default function GeneratePage() {
-    const { isAuthenticated, isCheckingAuth } = useAuth();
     const [contentFile, setContentFile] = useState<File | null>(null);
     const [styleFile, setStyleFile] = useState<File | null>(null);
     const [contentPreview, setContentPreview] = useState<string | null>(null);
@@ -21,23 +18,6 @@ export default function GeneratePage() {
     const [isDraggingStyle, setIsDraggingStyle] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const router = useRouter();
-
-    useEffect(() => {
-        if (!isAuthenticated && !isCheckingAuth) {
-            router.push("/login");
-        }
-    }, [isAuthenticated, isCheckingAuth, router]);
-
-    if (isCheckingAuth) {
-        return (
-            <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
-                <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
-            </div>
-        );
-    }
-
-    if (!isAuthenticated) return null;
 
     const handleFileChange = (
         e: React.ChangeEvent<HTMLInputElement>,
