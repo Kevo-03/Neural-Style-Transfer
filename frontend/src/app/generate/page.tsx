@@ -262,6 +262,7 @@ export default function GeneratePage() {
                                 <img
                                     src={resultImage}
                                     alt="Generated Masterpiece"
+                                    crossOrigin="anonymous"
                                     className="w-full max-w-2xl rounded-lg object-cover"
                                 />
                             </div>

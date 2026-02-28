@@ -115,6 +115,7 @@ export default function LibraryPage() {
                                     <img
                                         src={img.result}
                                         alt={`Generated Art ${img.id}`}
+                                        crossOrigin="anonymous"
                                         className="h-64 w-full object-cover"
                                     />
                                 ) : (
