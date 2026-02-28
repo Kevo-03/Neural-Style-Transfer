@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     do_access_key: str
     do_secret_key: str
 
+    postgres_user: str
+    postgres_password: str
+    postgres_db: str
+    database_url: str
+
     model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()

@@ -73,8 +73,6 @@ def get_image_status(image_id: int ,session: Annotated[Session, Depends(get_sess
             detail="You do not have permission to view this image"
         )
     
-    final_result_url = image.result_path
-    
     return {
         "id": image.id,
         "status": image.status,
