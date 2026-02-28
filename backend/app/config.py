@@ -8,7 +8,6 @@ class Settings(BaseSettings):
     
     redis_url: str
     frontend_url: str
-    backend_url: str
 
     do_space_name: str
     do_space_region: str
