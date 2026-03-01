@@ -77,7 +77,26 @@ export default function SignupPage() {
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </div>
-
+                    <div className="flex items-start mt-6 mb-2">
+                        <div className="flex h-5 items-center">
+                            <input
+                                id="privacy-consent"
+                                name="privacy-consent"
+                                type="checkbox"
+                                required
+                                className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500"
+                            />
+                        </div>
+                        <div className="ml-3 text-sm text-left">
+                            <label htmlFor="privacy-consent" className="text-gray-400">
+                                I agree to the{' '}
+                                <a href="/privacy" target="_blank" rel="noopener noreferrer" className="font-medium text-purple-400 hover:text-purple-300 underline">
+                                    Privacy Policy
+                                </a>
+                                {' '}and consent to the processing of my images.
+                            </label>
+                        </div>
+                    </div>
                     <div>
                         <button
                             type="submit"
