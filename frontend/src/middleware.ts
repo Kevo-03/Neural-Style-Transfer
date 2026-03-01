@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
     // 2. THE BOUNCER LOGIC
     // If they have NO token and try to access the app -> Send to Login
     if (!token && !isAuthPage) {
-        return NextResponse.redirect(new URL('/login', request.url));
+        return NextResponse.redirect(new URL('/', request.url));
     }
 
     // If they HAVE a token and try to view the login/landing page -> Send to Library

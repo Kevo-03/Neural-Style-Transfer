@@ -127,7 +127,6 @@ export default function LibraryPage() {
                                     </div>
                                 )}
                                 <div className="bg-gray-800/80 px-4 py-3 border-t border-gray-700 flex justify-between items-center">
-                                    <p className="text-sm font-bold text-white">Job #{img.id}</p>
                                     <p className={`text-xs font-semibold capitalize ${img.status === 'COMPLETED' ? 'text-green-400' :
                                         img.status === 'FAILED' ? 'text-red-400' : 'text-yellow-400'
                                         }`}>
