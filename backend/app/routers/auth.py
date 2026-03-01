@@ -60,7 +60,7 @@ def login(
 
     response.set_cookie(
         key="access_token",
-        value=f"Bearer {access_token}",
+        value=access_token,
         httponly=True,   # JavaScript cannot read this (highly secure)
         secure=True,    # Set to True in production (HTTPS)
         samesite="lax",  # Protects against CSRF attacks
