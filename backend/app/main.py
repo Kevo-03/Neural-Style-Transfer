@@ -24,9 +24,12 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+raw_origins = settings.frontend_url.split(",")
+origins = [origin.strip() for origin in raw_origins]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_url], # Allow Next.js
+    allow_origins=origins, # Allow Next.js
     allow_credentials=True,
     allow_methods=["*"], # Allow all methods (POST, GET, etc.)
     allow_headers=["*"],
