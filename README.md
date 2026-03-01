@@ -53,47 +53,6 @@ A full-stack, AI-powered web application that allows users to apply neural style
 - Node.js (v20+)
 - pnpm
 
-### Environment Variables
-
-Before running the application, you need to configure the environment variables for both the backend and frontend.
-
-#### Backend
-Create a `.env` file in the `backend/` directory with the following variables:
-
-```env
-# Authentication
-SECRET_KEY=
-ALGORITHM=
-ACCESS_TOKEN_EXPIRE_MINUTES=
-
-# CORS / Frontend connection
-FRONTEND_URL=
-
-# PostgreSQL Database Configuration
-POSTGRES_USER=
-POSTGRES_PASSWORD=
-POSTGRES_DB=
-DATABASE_URL=
-
-# Redis Broker Configuration
-REDIS_URL=
-
-# S3 Compatible Object Storage (e.g., DigitalOcean Spaces, AWS S3)
-# Note: You MUST have an S3 compatible storage bucket to handle image uploads and processed results.
-DO_SPACE_NAME=
-DO_SPACE_REGION=
-DO_ACCESS_KEY=
-DO_SECRET_KEY=
-```
-
-#### Frontend
-Create a `.env.local` file in the `frontend/` directory with the following variables:
-
-```env
-# URL where your FastAPI backend is running
-NEXT_PUBLIC_API_URL=
-```
-
 ### Running the Application
 
 #### 1. Start the Backend (API, Database, Redis, Celery Worker)
