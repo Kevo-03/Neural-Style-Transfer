@@ -74,7 +74,13 @@ def login(
 @router.post("/logout")
 def logout(response: Response):
     # 3. Create a logout endpoint to destroy the cookie
-    response.delete_cookie("access_token")
+    response.delete_cookie(
+        key="access_token",
+        domain=".neuralart.app", # <--- Add this!
+        secure=True,
+        httponly=True,
+        samesite="lax"
+    )
     return {"message": "Successfully logged out"}
 
 @router.get("/me")
