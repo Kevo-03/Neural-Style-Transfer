@@ -35,7 +35,10 @@ A full-stack, AI-powered web application that allows users to apply neural style
 - **Authentication:** PyJWT, Argon2 (Password Hashing)
 
 ### Infrastructure
-- **Containerization:** Docker & Docker Compose
+- ** Docker & Docker Compose (Containerization)
+- ** Nginx (Reverse Proxy & Max Body Size configuration for large uploads)
+- ** DigitalOcean Droplet (Hosting)
+- ** DigitalOcean Spaces (Object Storage / CDN)
 
 ## Features
 - **Neural Style Transfer:** Process content images with style images using pre-trained deep learning models.
