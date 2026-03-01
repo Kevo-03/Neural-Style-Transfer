@@ -11,7 +11,7 @@ export default function Navbar() {
 
     // 1. THE INVISIBILITY CLOAK
     // Hide the navbar entirely on public/auth pages
-    const hiddenPaths = ["/", "/login", "/signup"];
+    const hiddenPaths = ["/", "/login", "/signup", "/privacy"];
     if (hiddenPaths.includes(pathname)) {
         return null;
     }
