@@ -64,7 +64,6 @@ def login(
         httponly=True,   # JavaScript cannot read this (highly secure)
         secure=True,    # Set to True in production (HTTPS)
         samesite="lax",  # Protects against CSRF attacks
-        domain=".neuralart.app",
         max_age=settings.access_token_expire_minutes * 60 # 30 minutes (match your token expiration)
     )
 
