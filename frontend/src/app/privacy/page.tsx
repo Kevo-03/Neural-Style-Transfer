@@ -29,7 +29,7 @@ export default function PrivacyPolicy() {
 
                 <h2 className="text-xl font-bold text-white mt-6 mb-3">5. Contact</h2>
                 <p className="mb-4">
-                    If you have any questions about this Privacy Policy, please contact us at: [Your Contact Email]
+                    If you have any questions about this Privacy Policy, please contact us at: neuralart.privacy@gmail.com
                 </p>
             </div>
         </div>
