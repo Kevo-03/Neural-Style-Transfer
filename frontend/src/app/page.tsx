@@ -9,12 +9,6 @@ export default function Home() {
   const { isAuthenticated, isCheckingAuth } = useAuth();
   const router = useRouter();
 
-  // The Back-Button Defeater
-  useEffect(() => {
-    if (!isCheckingAuth && isAuthenticated) {
-      router.replace("/library"); // replace() prevents them from going back again!
-    }
-  }, [isAuthenticated, isCheckingAuth, router]);
   return (
     <>
       <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-gray-900 px-4 text-center">

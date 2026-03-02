@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "../lib/api"; // Adjust this path to wherever your Axios instance lives
+import { usePathname, useRouter } from "next/dist/client/components/navigation";
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -17,23 +18,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
+    const router = useRouter();
+    const pathname = usePathname();
     // 1. Check for the token when the app first loads
     useEffect(() => {
         const verifyAuth = async () => {
+            const publicPaths = ['/login', '/signup', '/'];
+            const isPublicPage = publicPaths.includes(pathname);
+
             try {
-                // If this succeeds, the browser automatically sent a valid cookie
                 await api.get("/auth/me");
                 setIsAuthenticated(true);
+
+                // 👇 THE REVERSE BOUNCER: If a logged-in user is on a public page, 
+                // instantly push them to their Library.
+                if (isPublicPage) {
+                    router.replace('/library');
+                }
+
             } catch (error) {
-                // If it fails (401), the cookie is missing or expired
                 setIsAuthenticated(false);
+
+                // 👇 THE STANDARD BOUNCER: If a guest/expired token is on a protected page, 
+                // instantly kick them to login.
+                if (!isPublicPage) {
+                    router.replace('/login');
+                }
             } finally {
                 setIsCheckingAuth(false);
             }
         };
 
         verifyAuth();
-    }, []);
+    }, [pathname, router]);
 
     const signup = async (email: string, password: string) => {
         try {
