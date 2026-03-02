@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, Response ,status
 from sqlmodel import Session, select
-from app.models import User
+from app.models import User, Image
 from app.db import get_session
 from fastapi.security import OAuth2PasswordRequestForm
 from app.schemas import UserCreate, UserResponse, Token
 from app.security import get_password_hash, create_access_token, verify_password
 from app.dependencies import get_current_user
+from app.storage import delete_from_spaces
 from app.config import settings
 from datetime import timedelta
 from typing import Annotated
@@ -87,3 +88,40 @@ def logout(response: Response):
 def get_me(current_user: Annotated[User, Depends(get_current_user)]):
     # If the dependency passes, they have a valid cookie!
     return {"email": current_user.email}
+
+@router.delete("/account")
+async def delete_user_account(
+    response: Response, # 👈 Needed to clear the cookie!
+    session: Annotated[Session, Depends(get_session)],
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    # 1. Fetch all images owned by this user
+    statement = select(Image).where(Image.user_id == current_user.id)
+    user_images = session.exec(statement).all()
+
+    # 2. The Cloud Wipe: Delete every physical file from DigitalOcean Spaces
+    for image in user_images:
+        if image.result_path:
+            await delete_from_spaces(image.result_path)
+        if image.content_path:
+            await delete_from_spaces(image.content_path)
+        if image.style_path:
+            await delete_from_spaces(image.style_path)
+        
+        # Delete the image record from the database so we don't have orphaned rows
+        session.delete(image)
+
+    # 3. The Database Wipe: Delete the user record itself
+    session.delete(current_user)
+    session.commit()
+
+    # 4. The Log Out: Destroy the auth cookie on the frontend
+    response.delete_cookie(
+        key="access_token",
+        domain=".neuralart.app",
+        httponly=True,
+        secure=True, 
+        samesite="lax"
+    )
+
+    return {"message": "Account and all associated cloud data successfully deleted."}
