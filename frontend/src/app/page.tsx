@@ -30,6 +30,9 @@ export default function Home() {
     <>
       <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-gray-900 px-4 text-center">
         <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-6xl">
+          <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent block mb-4 text-6xl sm:text-7xl">
+            NeuralArt
+          </span>
           Transform Your Photos with{" "}
           <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
             AI
