@@ -15,6 +15,16 @@ export default function SignupPage() {
     const [isLoading, setIsLoading] = useState(false);
     const { signup } = useAuth();
 
+    const { isAuthenticated, isCheckingAuth } = useAuth();
+    const router = useRouter();
+
+    // The Back-Button Defeater
+    useEffect(() => {
+        if (!isCheckingAuth && isAuthenticated) {
+            router.replace("/library"); // replace() prevents them from going back again!
+        }
+    }, [isAuthenticated, isCheckingAuth, router]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
