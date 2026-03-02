@@ -6,8 +6,7 @@ from app.config import settings
 from app.models import Image, User
 from app.schemas import ImageLibraryResponse
 from app.dependencies import get_current_user
-from app.storage import upload_to_spaces
-from app.storage import delete_from_spaces
+from app.storage import upload_to_spaces, delete_from_spaces, get_presigned_url
 from typing import Annotated
 import os
 
@@ -76,7 +75,7 @@ def get_image_status(image_id: int ,session: Annotated[Session, Depends(get_sess
     return {
         "id": image.id,
         "status": image.status,
-        "result": image.result_path 
+        "result": get_presigned_url(image.result_path) if image.result_path else None
     }
 
 @router.get("/library", response_model=list[ImageLibraryResponse])
@@ -89,7 +88,7 @@ def get_user_library(session: Annotated[Session, Depends(get_session)], current_
         {
             "id": image.id,
             "status": image.status,
-            "result": image.result_path 
+            "result": get_presigned_url(image.result_path) if image.result_path else None
         }
         for image in images
     ]

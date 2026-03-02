@@ -7,6 +7,7 @@ from ml_engine.inference import run_inference
 from app.db import engine
 from app.models import Image
 from app.config import settings
+from app.storage import get_presigned_url
 from sqlmodel import Session
 
 celery_app = Celery(
@@ -32,8 +33,10 @@ def generate_art_task(content_url, style_url, image_id):
     try:
         # 1. DOWNLOAD PHASE: Pull the raw bytes directly into RAM
         print("Downloading image bytes from cloud...")
-        content_bytes = requests.get(content_url).content
-        style_bytes = requests.get(style_url).content
+        secure_content_url = get_presigned_url(content_url)
+        secure_style_url = get_presigned_url(style_url)
+        content_bytes = requests.get(secure_content_url).content
+        style_bytes = requests.get(secure_style_url).content
 
         with Session(engine) as session:
             image = session.get(Image, image_id)
@@ -60,7 +63,7 @@ def generate_art_task(content_url, style_url, image_id):
             output_stream,
             settings.do_space_name,
             cloud_output_key,
-            ExtraArgs={'ACL': 'public-read', 'ContentType': 'image/jpeg'}
+            ExtraArgs={'ACL': 'private', 'ContentType': 'image/jpeg'}
         )
         
         result_url = f"https://{settings.do_space_name}.{settings.do_space_region}.cdn.digitaloceanspaces.com/{cloud_output_key}"
