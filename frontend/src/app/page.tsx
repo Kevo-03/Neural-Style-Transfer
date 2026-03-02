@@ -1,31 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
 
 export default function Home() {
-  const { isAuthenticated, isCheckingAuth } = useAuth();
-  const router = useRouter();
-
-  // 🛡️ THE REVERSE BOUNCER: If they are already logged in, send them to the app!
-  useEffect(() => {
-    if (!isCheckingAuth && isAuthenticated) {
-      router.push("/library");
-    }
-  }, [isAuthenticated, isCheckingAuth, router]);
-
-  // Prevent UI flash while checking
-  if (isCheckingAuth) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-900">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-gray-900 px-4 text-center">
