@@ -82,7 +82,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
             });
 
-            router.push('/library');
+            router.replace('/library');
         } catch (error) {
             console.error("Login failed", error);
             throw error; // Let the UI handle displaying the error message
@@ -93,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const logout = async () => {
         // 1. Wipe the token from the browser's storage
         await api.post("/auth/logout"); // Invalidate the token on the server side (optional but good practice)
-        router.push('/');
+        router.replace('/');
     };
 
     return (
