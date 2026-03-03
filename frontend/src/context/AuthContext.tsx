@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 // 👇 THE STANDARD BOUNCER: If a guest/expired token is on a protected page, 
                 // instantly kick them to login.
                 if (!isPublicPage) {
-                    router.replace('/login');
+                    router.replace('/');
                 }
             } finally {
                 setIsCheckingAuth(false);
@@ -82,7 +82,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
             });
 
-            window.location.href = "/library";
+            setIsAuthenticated(true);
+            router.push("/library");
         } catch (error) {
             console.error("Login failed", error);
             throw error; // Let the UI handle displaying the error message
@@ -91,9 +92,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // 3. The Logout Function
     const logout = async () => {
-        // 1. Wipe the token from the browser's storage
-        await api.post("/auth/logout"); // Invalidate the token on the server side (optional but good practice)
-        window.location.href = "/";
+        try {
+            await api.post("/auth/logout");
+        } catch (error) {
+            console.error("Logout error", error);
+        } finally {
+            // 👇 THE FIX: Clear the state, then use Soft Routing!
+            setIsAuthenticated(false);
+            router.push("/");
+        }
     };
 
     return (
