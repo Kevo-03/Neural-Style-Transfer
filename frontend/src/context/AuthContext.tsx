@@ -25,6 +25,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const verifyAuth = async () => {
             const publicPaths = ['/login', '/signup', '/'];
             const isPublicPage = publicPaths.includes(pathname);
+            const protectedPaths = ['/library', '/generate', '/settings'];
+            const isProtectedPage = protectedPaths.some(path => pathname.startsWith(path));
 
             try {
                 await api.get("/auth/me");
@@ -41,7 +43,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
                 // 👇 THE STANDARD BOUNCER: If a guest/expired token is on a protected page, 
                 // instantly kick them to login.
-                if (!isPublicPage) {
+                if (isProtectedPage) {
                     router.replace('/');
                 }
             } finally {
