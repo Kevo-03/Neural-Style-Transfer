@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
 
                 <h2 className="text-xl font-bold text-white mt-6 mb-3">4. Your Rights (KVKK / GDPR)</h2>
                 <p className="mb-4">
-                    You have the right to access, modify, or delete your personal data at any time. You can permanently delete your generated artwork directly from your Library dashboard. If you wish to completely delete your account and all associated email data from our database, please contact us.
+                    You have the right to access, modify, or delete your personal data at any time. You can permanently delete your generated artwork directly from your Library dashboard. If you wish to completely delete your account and all associated email data from our database, you can use the Delete Account button in your Library.
                 </p>
 
                 <h2 className="text-xl font-bold text-white mt-6 mb-3">5. Contact</h2>
