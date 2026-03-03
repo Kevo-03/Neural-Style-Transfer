@@ -1,9 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import api from "../lib/api";
-// 👇 FIX 1: Correct Next.js import
-import { usePathname, useRouter } from "next/navigation";
+import api from "../lib/api"; // Adjust this path to wherever your Axios instance lives
+import { useRouter, usePathname } from 'next/navigation';
 
 interface AuthContextType {
     isAuthenticated: boolean;
@@ -21,12 +20,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const router = useRouter();
     const pathname = usePathname();
-
+    // 1. Check for the token when the app first loads
     useEffect(() => {
         const verifyAuth = async () => {
-            // 👇 FIX 2: Put the loading shield back up while we check!
-            setIsCheckingAuth(true);
-
             const publicPaths = ['/login', '/signup', '/'];
             const isPublicPage = publicPaths.includes(pathname);
 
@@ -34,6 +30,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 await api.get("/auth/me");
                 setIsAuthenticated(true);
 
+                // 👇 THE REVERSE BOUNCER: If a logged-in user is on a public page, 
+                // instantly push them to their Library.
                 if (isPublicPage) {
                     router.replace('/library');
                 }
@@ -41,8 +39,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             } catch (error) {
                 setIsAuthenticated(false);
 
+                // 👇 THE STANDARD BOUNCER: If a guest/expired token is on a protected page, 
+                // instantly kick them to login.
                 if (!isPublicPage) {
-                    router.replace('/'); // Kick to landing page
+                    router.replace('/');
                 }
             } finally {
                 setIsCheckingAuth(false);
@@ -54,20 +54,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const signup = async (email: string, password: string) => {
         try {
+            // ⚠️ Note: Unlike login, standard FastAPI endpoints usually expect normal JSON!
+            // Make sure the keys "email" and "password" match your UserCreate Pydantic schema in backend.
             await api.post("/auth/signup", {
                 email: email,
                 password: password
             });
+
+            // If successful, automatically log them in!
             await login(email, password);
+
         } catch (error) {
             console.error("Signup failed", error);
             throw error;
         }
     };
 
+    // 2. The Login Function
     const login = async (email: string, password: string) => {
+        // 🔥 CRUCIAL: FastAPI OAuth2 expects form-encoded data, NOT standard JSON!
         const formData = new URLSearchParams();
-        formData.append("username", email);
+        formData.append("username", email); // Must strictly be 'username' for OAuth2
         formData.append("password", password);
 
         try {
@@ -75,23 +82,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
             });
 
-            setIsAuthenticated(true);
-            router.push("/library");
+            window.location.href = "/library";
         } catch (error) {
             console.error("Login failed", error);
-            throw error;
+            throw error; // Let the UI handle displaying the error message
         }
     };
 
+    // 3. The Logout Function
     const logout = async () => {
-        try {
-            await api.post("/auth/logout");
-        } catch (error) {
-            console.error("Logout error", error);
-        } finally {
-            setIsAuthenticated(false);
-            router.push("/");
-        }
+        // 1. Wipe the token from the browser's storage
+        await api.post("/auth/logout"); // Invalidate the token on the server side (optional but good practice)
+        window.location.href = "/";
     };
 
     return (
@@ -101,6 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
+// A custom hook to make using the context super easy in your components
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {
