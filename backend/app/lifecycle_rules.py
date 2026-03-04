@@ -1,17 +1,21 @@
 import os
 import boto3
-from app.config import settings
+from dotenv import load_dotenv
+
+# Load variables directly from your .env file
+load_dotenv()
 
 s3_client = boto3.client(
     's3',
-    region_name=settings.do_space_region,
-    endpoint_url=f"https://{settings.do_space_region}.digitaloceanspaces.com",
-    aws_access_key_id=settings.do_access_key,
-    aws_secret_access_key=settings.do_secret_key
+    region_name=os.getenv("DO_SPACE_REGION"),
+    endpoint_url=f"https://{os.getenv('DO_SPACE_REGION')}.digitaloceanspaces.com",
+    aws_access_key_id=os.getenv("DO_ACCESS_KEY"),
+    aws_secret_access_key=os.getenv("DO_SECRET_KEY")
 )
 
+# Use the exact API method DO requires
 s3_client.put_bucket_lifecycle_configuration(
-    Bucket=settings.do_space_name,
+    Bucket=os.getenv("DO_SPACE_NAME"),
     LifecycleConfiguration={
         'Rules': [
             {
