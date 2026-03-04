@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import api from "@/lib/api";
 import Link from "next/link";
 import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle, AlertCircle, Download } from "lucide-react";
@@ -22,6 +22,8 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
     const [isDraggingStyle, setIsDraggingStyle] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setFile: (f: File) => void, setPreview: (p: string) => void) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -32,28 +34,35 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
     };
 
     const pollStatus = async (id: number) => {
-        const interval = setInterval(async () => {
+        pollingIntervalRef.current = setInterval(async () => {
             try {
-                // We will use the same status endpoint for now, or adapt later if needed
                 const res = await api.get(`/status/${id}`);
                 const jobStatus = res.data.status;
 
                 if (jobStatus === "COMPLETED") {
-                    clearInterval(interval);
+                    clearInterval(pollingIntervalRef.current!); // Stop asking!
                     setStatus("COMPLETED");
                     setResultImage(res.data.result);
                 } else if (jobStatus === "FAILED") {
-                    clearInterval(interval);
+                    clearInterval(pollingIntervalRef.current!);
                     setStatus("FAILED");
                 } else {
                     setStatus("PROCESSING");
                 }
             } catch (error) {
-                clearInterval(interval);
+                clearInterval(pollingIntervalRef.current!);
                 setStatus("FAILED");
             }
         }, 3000);
     };
+
+    useEffect(() => {
+        return () => {
+            if (pollingIntervalRef.current) {
+                clearInterval(pollingIntervalRef.current);
+            }
+        };
+    }, []);
 
     const handleUpload = async () => {
         if (!contentFile || !styleFile) return;
