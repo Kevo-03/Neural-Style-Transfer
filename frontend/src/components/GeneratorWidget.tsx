@@ -33,16 +33,22 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
         }
     };
 
-    const pollStatus = async (id: number) => {
+    // 👇 UPDATED: Accepts trackingId and isPublicUser
+    const pollStatus = async (trackingId: string | number, isPublicUser: boolean) => {
         pollingIntervalRef.current = setInterval(async () => {
             try {
-                const res = await api.get(`/status/${id}`);
-                const jobStatus = res.data.status;
+                // 👇 Hit the correct endpoint
+                const statusEndpoint = isPublicUser ? `/status/public/${trackingId}` : `/status/${trackingId}`;
+                const res = await api.get(statusEndpoint);
+
+                // 👇 Normalize the status just in case it's lowercase from Celery
+                const jobStatus = res.data.status ? res.data.status.toUpperCase() : "UNKNOWN";
 
                 if (jobStatus === "COMPLETED") {
                     clearInterval(pollingIntervalRef.current!); // Stop asking!
                     setStatus("COMPLETED");
-                    setResultImage(res.data.result);
+                    // 👇 Check for BOTH result (DB) and result_url (Redis)
+                    setResultImage(res.data.result || res.data.result_url);
                 } else if (jobStatus === "FAILED") {
                     clearInterval(pollingIntervalRef.current!);
                     setStatus("FAILED");
@@ -50,6 +56,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                     setStatus("PROCESSING");
                 }
             } catch (error) {
+                console.error("Polling error", error);
                 clearInterval(pollingIntervalRef.current!);
                 setStatus("FAILED");
             }
@@ -75,15 +82,18 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
         formData.append("style_file", styleFile);
 
         try {
-            // 👇 Dynamic routing based on whether they are logged in!
+            // Dynamic routing based on whether they are logged in
             const endpoint = isPublic ? "/generate-public" : "/generate";
             const response = await api.post(endpoint, formData);
-            const dbId = response.data.database_id;
+
+            // 👇 Extract the correct ID based on user type
+            const trackingId = isPublic ? response.data.task_id : response.data.database_id;
 
             setStatus("PROCESSING");
-            pollStatus(dbId);
+            pollStatus(trackingId, isPublic); // 👈 Pass both values in!
 
         } catch (error) {
+            console.error("Upload failed", error);
             setErrorMessage("Upload failed. If you are a guest, you may have hit your daily limit.");
             setStatus("FAILED");
         } finally {
@@ -214,7 +224,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                             <button onClick={handleDownload} className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:opacity-90 transition font-semibold">
                                 <Download className="w-5 h-5" /> Download Art
                             </button>
-                            {/* 👇 Show "Sign Up" if public, "Create Another" if logged in */}
+                            {/* Show "Sign Up" if public, "Create Another" if logged in */}
                             {isPublic ? (
                                 <Link href="/signup" className="px-6 py-3 border border-purple-500 bg-purple-900/30 text-purple-300 rounded-lg hover:bg-purple-900/50 transition font-semibold">
                                     Create a free account to save images

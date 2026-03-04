@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Depends, status
 from sqlmodel import Session, select, desc
 from celery import Celery
+from celery.result import AsyncResult
 from app.db import get_session
 from app.config import settings
 from app.models import Image, User
@@ -12,7 +13,7 @@ import os
 
 router = APIRouter()
 
-celery_app = Celery("nst_worker", broker=settings.redis_url)
+celery_app = Celery("nst_worker", broker=settings.redis_url, backend=settings.redis_url)
 
 @router.post("/generate")
 async def generate_image(  # 👈 MUST be async now!
@@ -123,3 +124,42 @@ async def delete_image(  # 👈 MUST be async now
     session.commit()
     
     return {"message": "Image and cloud files deleted successfully"}
+
+@router.post("/generate-public")
+async def generate_public_art(
+    content_file: UploadFile = File(...), 
+    style_file: UploadFile = File(...)
+):
+    # 1. Upload raw images to S3 (same as your protected route)
+    content_url = await upload_to_spaces(content_file, "temp-public/content")
+    style_url = await upload_to_spaces(style_file, "temp-public/style")
+    
+    # 2. Trigger Celery with the is_public flag!
+    # Note: image_id is None because we have no database row
+    task = celery_app.send_task(
+        "generate_art",
+        args=[content_url, style_url],
+        kwargs={"image_id": None, "is_public": True} # 👈 Safer and cleaner!
+    )
+    
+    # 3. Return the Celery Task ID to the frontend instead of a DB ID
+    return {"task_id": task.id}
+
+@router.get("/status/public/{task_id}")
+async def get_public_status(task_id: str):
+    # Ask Redis about this specific task ticket
+    task_result = AsyncResult(task_id, app=celery_app)
+    
+    # Celery internal states: PENDING, STARTED, SUCCESS, FAILURE
+    if task_result.state == "PENDING" or task_result.state == "STARTED":
+        return {"status": "PROCESSING"}
+        
+    elif task_result.state == "SUCCESS":
+        # This returns the exact dictionary from the bottom of our worker!
+        # {"status": "completed", "result_url": "https://..."}
+        return task_result.result
+        
+    elif task_result.state == "FAILURE":
+        return {"status": "FAILED", "error": str(task_result.info)}
+        
+    return {"status": "UNKNOWN"}
