@@ -27,7 +27,7 @@ services:
       # Updated to point inside your 'app' folder using standard Uvicorn syntax
       command: uvicorn app.main:app --host 0.0.0.0 --port 8000
       ports:
-        - "8000:8000"
+        - "127.0.0.1:8000:8000"
       env_file:
         - .env
       depends_on:
