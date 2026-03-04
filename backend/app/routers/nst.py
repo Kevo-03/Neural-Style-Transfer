@@ -155,9 +155,17 @@ async def get_public_status(task_id: str):
         return {"status": "PROCESSING"}
         
     elif task_result.state == "SUCCESS":
-        # This returns the exact dictionary from the bottom of our worker!
-        # {"status": "completed", "result_url": "https://..."}
-        return task_result.result
+        # 1. Grab the dictionary Celery saved in Redis
+        result_data = task_result.result 
+        
+        # 2. Extract the raw private URL
+        raw_url = result_data.get("result_url")
+        
+        # 3. Convert it to a presigned URL that bypasses the 403 error!
+        if raw_url:
+            result_data["result_url"] = get_presigned_url(raw_url)
+            
+        return result_data
         
     elif task_result.state == "FAILURE":
         return {"status": "FAILED", "error": str(task_result.info)}
