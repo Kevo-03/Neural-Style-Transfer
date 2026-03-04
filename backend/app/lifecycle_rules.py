@@ -14,18 +14,20 @@ s3_client = boto3.client(
 )
 
 # Use the exact API method DO requires
+# Try this specific structure - it's the most compatible with DigitalOcean
 s3_client.put_bucket_lifecycle_configuration(
     Bucket=os.getenv("DO_SPACE_NAME"),
     LifecycleConfiguration={
         'Rules': [
             {
-                'ID': 'Delete Guest Art',
-                'Filter': {'Prefix': 'temp-public/'},
+                'ID': 'DeleteGuestArt',
                 'Status': 'Enabled',
-                'Expiration': {'Days': 1}
+                'Prefix': 'temp-public/',  # Using old-style Prefix for maximum compatibility
+                'Expiration': {
+                    'Days': 1
+                }
             }
         ]
     }
 )
-
 print("✅ Success! The API accepted the modern XML payload. The black hole is active.")
