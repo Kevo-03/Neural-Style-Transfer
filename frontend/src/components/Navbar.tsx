@@ -5,24 +5,18 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
-    // We only need logout now! The middleware handles the rest.
     const { logout } = useAuth();
     const pathname = usePathname();
 
-    // 1. THE INVISIBILITY CLOAK
-    // Hide the navbar entirely on public/auth pages
     const hiddenPaths = ["/", "/login", "/signup", "/privacy"];
     if (hiddenPaths.includes(pathname)) {
         return null;
     }
 
-    // 2. THE DASHBOARD NAVBAR
-    // If the code reaches here, the middleware GUARANTEES they have a valid cookie.
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-gray-800 bg-gray-900/80 backdrop-blur-md px-4 sm:px-6 lg:px-8">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between">
 
-                {/* LEFT SIDE: Brand / Logo */}
                 <div className="flex items-center">
                     <Link
                         href="/"
@@ -32,7 +26,6 @@ export default function Navbar() {
                     </Link>
                 </div>
 
-                {/* RIGHT SIDE: Guaranteed Authenticated Links */}
                 <div className="flex items-center space-x-6">
                     <Link
                         href="/generate"

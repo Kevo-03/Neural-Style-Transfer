@@ -9,7 +9,6 @@ export default function GeneratePage() {
                 Neural Style Transfer
             </h1>
 
-            {/* isPublic=false means it will hit the secure endpoint and save to the DB */}
             <GeneratorWidget isPublic={false} />
         </main>
     );

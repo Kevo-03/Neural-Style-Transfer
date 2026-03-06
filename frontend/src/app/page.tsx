@@ -20,7 +20,6 @@ export default function Home() {
           Upload your photos and apply the visual style of famous artworks using our advanced Neural Style Transfer engine.
         </p>
 
-        {/* Buttons for those who want to sign up immediately */}
         <div className="mt-10 mb-24 flex flex-col justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <Link
             href="/signup"
@@ -36,12 +35,10 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* The new "Try it Free" Section */}
         <div className="w-full max-w-5xl mt-12 mb-24 pb-12">
           <h2 className="text-3xl font-bold text-white mb-2">Try it right now</h2>
           <p className="text-gray-400 mb-10">No credit card or account required.</p>
 
-          {/* isPublic=true tells it to hit the open endpoint */}
           <GeneratorWidget isPublic={true} />
         </div>
       </div>

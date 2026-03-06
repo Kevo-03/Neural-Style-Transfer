@@ -26,7 +26,7 @@ export default function DeleteAccountButton() {
                 const data = await response.json();
                 setError(data.detail || "Failed to delete account. Please try again.");
                 setIsDeleting(false);
-                setIsModalOpen(false); // Close modal so they can see the error
+                setIsModalOpen(false);
             }
         } catch (err) {
             console.error("Deletion error:", err);
@@ -38,7 +38,6 @@ export default function DeleteAccountButton() {
 
     return (
         <div className="mt-8">
-            {/* The main button that opens the modal */}
             <button
                 onClick={() => setIsModalOpen(true)}
                 className="text-red-500 hover:text-red-400 font-semibold text-sm transition-colors border border-red-500/30 hover:bg-red-900/20 px-4 py-2 rounded"
@@ -48,7 +47,6 @@ export default function DeleteAccountButton() {
 
             {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
 
-            {/* The Custom UI Modal Overlay */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
                     <div className="bg-gray-900 border border-red-500/50 rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl">
@@ -58,7 +56,6 @@ export default function DeleteAccountButton() {
                         </p>
 
                         <div className="flex justify-end space-x-3">
-                            {/* Cancel Button */}
                             <button
                                 onClick={() => setIsModalOpen(false)}
                                 disabled={isDeleting}
@@ -67,7 +64,6 @@ export default function DeleteAccountButton() {
                                 Cancel
                             </button>
 
-                            {/* Confirm Delete Button */}
                             <button
                                 onClick={executeDeletion}
                                 disabled={isDeleting}

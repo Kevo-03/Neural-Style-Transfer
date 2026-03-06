@@ -7,7 +7,6 @@ export default function NotFound() {
     return (
         <div className="flex min-h-[80vh] flex-col items-center justify-center bg-gray-900 px-4 text-center">
 
-            {/* The 404 Icon & Glitch text */}
             <div className="flex flex-col items-center justify-center space-y-4 animate-in zoom-in duration-500">
                 <div className="rounded-full bg-purple-900/30 p-6 text-purple-400 border border-purple-500/30 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
                     <Ghost className="h-16 w-16 animate-bounce" />
@@ -17,7 +16,6 @@ export default function NotFound() {
                 </h1>
             </div>
 
-            {/* The Message */}
             <div className="mt-6 max-w-md space-y-3">
                 <h2 className="text-2xl font-bold text-gray-200">
                     Lost in the Latent Space
@@ -27,7 +25,6 @@ export default function NotFound() {
                 </p>
             </div>
 
-            {/* The Escape Route */}
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Link
                     href="/library"

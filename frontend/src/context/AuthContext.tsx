@@ -32,8 +32,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 await api.get("/auth/me");
                 setIsAuthenticated(true);
 
-                // 👇 THE REVERSE BOUNCER: If a logged-in user is on a public page, 
-                // instantly push them to their Library.
                 if (isPublicPage) {
                     router.replace('/library');
                 }
@@ -41,8 +39,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             } catch (error) {
                 setIsAuthenticated(false);
 
-                // 👇 THE STANDARD BOUNCER: If a guest/expired token is on a protected page, 
-                // instantly kick them to login.
                 if (isProtectedPage) {
                     router.replace('/');
                 }
@@ -56,14 +52,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const signup = async (email: string, password: string) => {
         try {
-            // ⚠️ Note: Unlike login, standard FastAPI endpoints usually expect normal JSON!
-            // Make sure the keys "email" and "password" match your UserCreate Pydantic schema in backend.
             await api.post("/auth/signup", {
                 email: email,
                 password: password
             });
 
-            // If successful, automatically log them in!
             await login(email, password);
 
         } catch (error) {
@@ -72,11 +65,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    // 2. The Login Function
     const login = async (email: string, password: string) => {
-        // 🔥 CRUCIAL: FastAPI OAuth2 expects form-encoded data, NOT standard JSON!
         const formData = new URLSearchParams();
-        formData.append("username", email); // Must strictly be 'username' for OAuth2
+        formData.append("username", email);
         formData.append("password", password);
 
         try {
@@ -87,14 +78,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             window.location.href = "/library";
         } catch (error) {
             console.error("Login failed", error);
-            throw error; // Let the UI handle displaying the error message
+            throw error;
         }
     };
 
-    // 3. The Logout Function
     const logout = async () => {
-        // 1. Wipe the token from the browser's storage
-        await api.post("/auth/logout"); // Invalidate the token on the server side (optional but good practice)
+        await api.post("/auth/logout");
         window.location.href = "/";
     };
 
@@ -105,7 +94,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-// A custom hook to make using the context super easy in your components
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {

@@ -33,21 +33,17 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
         }
     };
 
-    // 👇 UPDATED: Accepts trackingId and isPublicUser
     const pollStatus = async (trackingId: string | number, isPublicUser: boolean) => {
         pollingIntervalRef.current = setInterval(async () => {
             try {
-                // 👇 Hit the correct endpoint
                 const statusEndpoint = isPublicUser ? `/status/public/${trackingId}` : `/status/${trackingId}`;
                 const res = await api.get(statusEndpoint);
 
-                // 👇 Normalize the status just in case it's lowercase from Celery
                 const jobStatus = res.data.status ? res.data.status.toUpperCase() : "UNKNOWN";
 
                 if (jobStatus === "COMPLETED") {
-                    clearInterval(pollingIntervalRef.current!); // Stop asking!
+                    clearInterval(pollingIntervalRef.current!);
                     setStatus("COMPLETED");
-                    // 👇 Check for BOTH result (DB) and result_url (Redis)
                     setResultImage(res.data.result || res.data.result_url);
                 } else if (jobStatus === "FAILED") {
                     clearInterval(pollingIntervalRef.current!);
@@ -82,15 +78,13 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
         formData.append("style_file", styleFile);
 
         try {
-            // Dynamic routing based on whether they are logged in
             const endpoint = isPublic ? "/generate-public" : "/generate";
             const response = await api.post(endpoint, formData);
 
-            // 👇 Extract the correct ID based on user type
             const trackingId = isPublic ? response.data.task_id : response.data.database_id;
 
             setStatus("PROCESSING");
-            pollStatus(trackingId, isPublic); // 👈 Pass both values in!
+            pollStatus(trackingId, isPublic);
 
         } catch (error) {
             console.error("Upload failed", error);
@@ -165,7 +159,6 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
 
             {status !== "COMPLETED" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl animate-fade-in">
-                    {/* Content Image Box */}
                     <div
                         onDragOver={(e) => handleDragOver(e, setIsDraggingContent)}
                         onDragLeave={(e) => handleDragLeave(e, setIsDraggingContent)}
@@ -180,7 +173,6 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setContentFile, setContentPreview)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
                     </div>
 
-                    {/* Style Image Box */}
                     <div
                         onDragOver={(e) => handleDragOver(e, setIsDraggingStyle)}
                         onDragLeave={(e) => handleDragLeave(e, setIsDraggingStyle)}
@@ -224,7 +216,6 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                             <button onClick={handleDownload} className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:opacity-90 transition font-semibold">
                                 <Download className="w-5 h-5" /> Download Art
                             </button>
-                            {/* Show "Sign Up" if public, "Create Another" if logged in */}
                             {isPublic ? (
                                 <Link href="/signup" className="px-6 py-3 border border-purple-500 bg-purple-900/30 text-purple-300 rounded-lg hover:bg-purple-900/50 transition font-semibold">
                                     Create a free account to save images

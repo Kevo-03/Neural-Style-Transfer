@@ -40,8 +40,8 @@ export default function LibraryPage() {
         if (toastMessage) {
             const timer = setTimeout(() => {
                 setToastMessage(null);
-            }, 3000); // Disappears after 3 seconds
-            return () => clearTimeout(timer); // Cleanup if the component unmounts
+            }, 3000);
+            return () => clearTimeout(timer);
         }
     }, [toastMessage]);
 
@@ -62,7 +62,6 @@ export default function LibraryPage() {
             window.URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Failed to download image:", error);
-            // Optionally, you could set an error state here to show a toast notification
             setToastMessage("Could not download the image. Please try right-clicking and saving.");
         }
     };

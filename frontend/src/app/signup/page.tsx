@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
