@@ -13,7 +13,6 @@ SECRET_KEY = os.getenv("DO_SECRET_KEY")
 def test_upload():
     print(f"Connecting to DigitalOcean Space: '{SPACE_NAME}' in region '{REGION}'...\n")
 
-    # 2. Initialize the S3 Client pointed at DigitalOcean
     client = boto3.client(
         's3',
         region_name=REGION,
@@ -23,13 +22,11 @@ def test_upload():
     )
 
     try:
-        # 3. Create a tiny test file in memory
         test_content = b"Success! Your Boto3 configuration is perfect."
         file_name = "test-folder/hello_world.txt"
 
         print(f"Attempting to upload '{file_name}'...")
 
-        # 4. Upload it with public read permissions
         client.put_object(
             Bucket=SPACE_NAME,
             Key=file_name,
@@ -38,7 +35,6 @@ def test_upload():
             ContentType='text/plain'
         )
 
-        # 5. Generate and print the CDN URL
         public_url = f"https://{SPACE_NAME}.{REGION}.cdn.digitaloceanspaces.com/{file_name}"
         
         print("\n✅ UPLOAD SUCCESSFUL!")

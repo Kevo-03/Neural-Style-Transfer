@@ -9,9 +9,7 @@ from app.config import settings
 
 
 
-# 2. THE VALIDATION FUNCTION
 def get_current_user(
-    # FastAPI automatically extracts the token from the 'Authorization' header
     request: Request, 
     session: Session = Depends(get_session)
 ):
@@ -31,28 +29,22 @@ def get_current_user(
     token = cookie_token.replace("Bearer ", "")
 
     try:
-        # Step A: Mathematically decode the token using your secret key
         payload = jwt.decode(
             token, 
             settings.secret_key, 
             algorithms=[settings.algorithm]
         )
         
-        # Step B: Extract the email we saved inside the 'sub' key earlier
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
             
     except jwt.PyJWTError:
-        # If the token is expired, forged, or garbage, PyJWT throws an error.
-        # We catch it here and kick the user out.
         raise credentials_exception
         
-    # Step C: Look up the user in the database to ensure they haven't been deleted
     user = session.exec(select(User).where(User.email == email)).first()
     
     if user is None:
         raise credentials_exception
         
-    # Step D: Return the fully validated User database object!
     return user

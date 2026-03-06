@@ -6,21 +6,15 @@ import os
 import io
 from PIL import Image
 
-# --- 1. SETUP GLOBAL VARIABLES (The Fix) ---
-# We do NOT load the model here anymore. We just define the URL.
 HUB_MODEL_URL = 'https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2'
-hub_model = None  # Placeholder
+hub_model = None  
 
 def get_model():
-    """
-    Singleton pattern: Only loads the model if it hasn't been loaded yet.
-    This ensures loading happens INSIDE the worker process, avoiding deadlocks.
-    """
     global hub_model
     if hub_model is None:
-        print("⏳ Loading TensorFlow Model (First Run Only)...")
+        print("Loading TensorFlow Model (First Run Only)...")
         hub_model = hub.load(HUB_MODEL_URL)
-        print("✅ Model Loaded!")
+        print("Model Loaded!")
     return hub_model
 
 def load_img(img_bytes: bytes):
@@ -63,7 +57,6 @@ def run_inference(content_bytes: bytes, style_bytes: bytes) -> io.BytesIO:
     return output_buffer
 
 if __name__ == "__main__":
-    # Test Block
     print("Testing in-memory pipeline...")
     
     try:
@@ -74,7 +67,6 @@ if __name__ == "__main__":
             
         out_stream = run_inference(c_bytes, s_bytes)
         
-        # Save the stream out to disk just to verify it worked locally
         with open("output/test_result.jpg", "wb") as f:
             f.write(out_stream.read())
             

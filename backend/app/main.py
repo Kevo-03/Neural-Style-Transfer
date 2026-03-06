@@ -8,16 +8,13 @@ import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # --- STARTUP LOGIC ---
     print("Starting up...")
     create_db_and_tables()
     print("Database tables created!")
     
-    yield  # <--- This is where the app runs and handles requests
+    yield  
     
-    # --- SHUTDOWN LOGIC ---
     print("Shutting down...")
-    # (If you had a Redis connection to close, you would do it here)
 
 app = FastAPI(
     title="Neural Style Transfer API", 
@@ -29,9 +26,9 @@ origins = [origin.strip() for origin in raw_origins]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins, # Allow Next.js
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"], # Allow all methods (POST, GET, etc.)
+    allow_methods=["*"], 
     allow_headers=["*"],
     expose_headers=["*"]
 )

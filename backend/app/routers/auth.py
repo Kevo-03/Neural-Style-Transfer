@@ -50,10 +50,8 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
         
-    # UPGRADED: Calculate the specific expiration time here
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
     
-    # Pass both the data and the delta into your upgraded function
     access_token = create_access_token(
         data={"sub": user.email}, 
         expires_delta=access_token_expires
@@ -62,11 +60,11 @@ def login(
     response.set_cookie(
         key="access_token",
         value=access_token,
-        httponly=True,   # JavaScript cannot read this (highly secure)
-        secure=True,    # Set to True in production (HTTPS)
-        samesite="lax",  # Protects against CSRF attacks
+        httponly=True,   
+        secure=True,   #<--- Set to False if testing on localhost without HTTPS
+        samesite="lax",  
         domain=".neuralart.app",
-        max_age=settings.access_token_expire_minutes * 60 # 30 minutes (match your token expiration)
+        max_age=settings.access_token_expire_minutes * 60 
     )
 
     return {"message": "Successfully logged in"}
@@ -74,10 +72,9 @@ def login(
 
 @router.post("/logout")
 def logout(response: Response):
-    # 3. Create a logout endpoint to destroy the cookie
     response.delete_cookie(
         key="access_token",
-        domain=".neuralart.app", # <--- Add this!
+        domain=".neuralart.app", 
         secure=True,
         httponly=True,
         samesite="lax"
@@ -86,20 +83,17 @@ def logout(response: Response):
 
 @router.get("/me")
 def get_me(current_user: Annotated[User, Depends(get_current_user)]):
-    # If the dependency passes, they have a valid cookie!
     return {"email": current_user.email}
 
 @router.delete("/account")
 async def delete_user_account(
-    response: Response, # 👈 Needed to clear the cookie!
+    response: Response, 
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(get_current_user)]
 ):
-    # 1. Fetch all images owned by this user
     statement = select(Image).where(Image.user_id == current_user.id)
     user_images = session.exec(statement).all()
 
-    # 2. The Cloud Wipe: Delete every physical file from DigitalOcean Spaces
     for image in user_images:
         if image.result_path:
             await delete_from_spaces(image.result_path)
@@ -108,14 +102,11 @@ async def delete_user_account(
         if image.style_path:
             await delete_from_spaces(image.style_path)
         
-        # Delete the image record from the database so we don't have orphaned rows
         session.delete(image)
 
-    # 3. The Database Wipe: Delete the user record itself
     session.delete(current_user)
     session.commit()
 
-    # 4. The Log Out: Destroy the auth cookie on the frontend
     response.delete_cookie(
         key="access_token",
         domain=".neuralart.app",

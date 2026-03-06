@@ -3,7 +3,6 @@ from pwdlib import PasswordHash
 from datetime import datetime, timedelta, timezone
 from app.config import settings
 
-# Automatically selects Argon2 and configures the best security settings
 password_hash = PasswordHash.recommended()
 
 def get_password_hash(password: str) -> str:
