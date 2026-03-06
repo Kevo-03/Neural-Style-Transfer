@@ -37,7 +37,7 @@ export default function Home() {
         </div>
 
         {/* The new "Try it Free" Section */}
-        <div className="w-full max-w-5xl mt-12 mb-24 pb-12 border-b border-gray-800">
+        <div className="w-full max-w-5xl mt-12 mb-24 pb-12">
           <h2 className="text-3xl font-bold text-white mb-2">Try it right now</h2>
           <p className="text-gray-400 mb-10">No credit card or account required.</p>
 
