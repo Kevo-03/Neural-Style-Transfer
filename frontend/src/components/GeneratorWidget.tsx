@@ -207,7 +207,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                 {status === "PROCESSING" && (
                     <div className="flex flex-col items-center gap-4">
                         <div className="flex items-center gap-3 text-yellow-400 text-xl"><Loader2 className="w-8 h-8 animate-spin" /> Painting masterpiece...</div>
-                        <p className="text-sm text-gray-500">This takes about 10-20 seconds.</p>
+                        <p className="text-sm text-gray-500">This can take a few seconds.</p>
                     </div>
                 )}
                 {status === "FAILED" && <div className="flex items-center gap-3 text-red-500 text-xl"><AlertCircle className="w-6 h-6" /> Something went wrong.</div>}
