@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     do_space_region: str
     do_access_key: str
     do_secret_key: str
+    do_full_access__access_key: str
+    do_full_access_secret_key: str
 
     postgres_user: str
     postgres_password: str
