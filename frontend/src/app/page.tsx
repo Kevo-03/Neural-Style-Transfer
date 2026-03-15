@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import GeneratorWidget from "@/components/GeneratorWidget";
 
 export default function Home() {
@@ -33,6 +34,68 @@ export default function Home() {
           >
             Log In
           </Link>
+        </div>
+
+        <div className="w-full max-w-5xl mx-auto mb-24 px-4">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+
+            {/* Content Image */}
+            <div className="flex flex-col items-center">
+              <div className="h-40 w-40 sm:h-48 sm:w-48 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                {/* Added 'relative' to the parent div for the 'fill' property to work */}
+                <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
+                  <Image
+                    src="/demo-content.jpg"
+                    alt="Original Content"
+                    fill
+                    sizes="(max-width: 640px) 160px, 192px"
+                    className="object-cover opacity-80 hover:opacity-100 transition"
+                  />
+                </div>
+              </div>
+              <span className="mt-4 text-sm font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">Content Photo</span>
+            </div>
+
+            {/* Plus Icon */}
+            <div className="text-4xl font-light bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">+</div>
+
+            {/* Style Image */}
+            <div className="flex flex-col items-center">
+              <div className="h-40 w-40 sm:h-48 sm:w-48 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
+                <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
+                  <Image
+                    src="/demo-style.jpg"
+                    alt="Art Style"
+                    fill
+                    sizes="(max-width: 640px) 160px, 192px"
+                    className="object-cover opacity-80 hover:opacity-100 transition"
+                  />
+                </div>
+              </div>
+              <span className="mt-4 text-sm font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">Style Artwork</span>
+            </div>
+
+            {/* Equals/Arrow Icon */}
+            <div className="text-4xl font-light bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hidden md:block">=</div>
+            <div className="text-4xl font-light bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent md:hidden">↓</div>
+
+            {/* Output Image */}
+            <div className="flex flex-col items-center">
+              <div className="h-48 w-48 sm:h-56 sm:w-56 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_25px_rgba(236,72,153,0.4)]">
+                <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
+                  <Image
+                    src="/demo-output.jpg"
+                    alt="Final AI Generation"
+                    fill
+                    sizes="(max-width: 640px) 192px, 224px"
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+              <span className="mt-4 text-sm font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">Final Result</span>
+            </div>
+
+          </div>
         </div>
 
         <div className="w-full max-w-5xl mt-12 mb-24 pb-12">
