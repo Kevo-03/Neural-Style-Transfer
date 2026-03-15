@@ -41,16 +41,10 @@ export default function Home() {
 
             {/* Content Image */}
             <div className="flex flex-col items-center">
+              {/* Gradient border wrapper */}
               <div className="h-40 w-40 sm:h-48 sm:w-48 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
-                {/* Added 'relative' to the parent div for the 'fill' property to work */}
-                <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
-                  <Image
-                    src="/demo-content.jpg"
-                    alt="Original Content"
-                    fill
-                    sizes="(max-width: 640px) 160px, 192px"
-                    className="object-cover opacity-80 hover:opacity-100 transition"
-                  />
+                <div className="h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
+                  <img src="/demo-content.jpg" alt="Original Content" className="object-cover w-full h-full opacity-80 hover:opacity-100 transition" />
                 </div>
               </div>
               <span className="mt-4 text-sm font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">Content Photo</span>
@@ -62,14 +56,8 @@ export default function Home() {
             {/* Style Image */}
             <div className="flex flex-col items-center">
               <div className="h-40 w-40 sm:h-48 sm:w-48 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
-                <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
-                  <Image
-                    src="/demo-style.jpg"
-                    alt="Art Style"
-                    fill
-                    sizes="(max-width: 640px) 160px, 192px"
-                    className="object-cover opacity-80 hover:opacity-100 transition"
-                  />
+                <div className="h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
+                  <img src="/demo-style.jpg" alt="Art Style" className="object-cover w-full h-full opacity-80 hover:opacity-100 transition" />
                 </div>
               </div>
               <span className="mt-4 text-sm font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">Style Artwork</span>
@@ -79,17 +67,11 @@ export default function Home() {
             <div className="text-4xl font-light bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hidden md:block">=</div>
             <div className="text-4xl font-light bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent md:hidden">↓</div>
 
-            {/* Output Image */}
+            {/* Output Image (Slightly larger to emphasize the result) */}
             <div className="flex flex-col items-center">
               <div className="h-48 w-48 sm:h-56 sm:w-56 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_25px_rgba(236,72,153,0.4)]">
-                <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
-                  <Image
-                    src="/demo-output.jpg"
-                    alt="Final AI Generation"
-                    fill
-                    sizes="(max-width: 640px) 192px, 224px"
-                    className="object-cover"
-                  />
+                <div className="h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
+                  <img src="/demo-output.jpg" alt="Final AI Generation" className="object-cover w-full h-full" />
                 </div>
               </div>
               <span className="mt-4 text-sm font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">Final Result</span>
