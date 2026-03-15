@@ -61,9 +61,9 @@ def login(
         key="access_token",
         value=access_token,
         httponly=True,   
-        secure=True,   #<--- Set to False if testing on localhost without HTTPS
+        secure=(settings.env_name == "production"),   #<--- Set to False if testing on localhost without HTTPS
         samesite="lax",  
-        domain=".neuralart.app",
+        domain=settings.cookie_domain,
         max_age=settings.access_token_expire_minutes * 60 
     )
 
@@ -74,8 +74,8 @@ def login(
 def logout(response: Response):
     response.delete_cookie(
         key="access_token",
-        domain=".neuralart.app", 
-        secure=True,
+        domain=settings.cookie_domain,
+        secure=(settings.env_name == "production"),
         httponly=True,
         samesite="lax"
     )
@@ -109,9 +109,9 @@ async def delete_user_account(
 
     response.delete_cookie(
         key="access_token",
-        domain=".neuralart.app",
+        domain=settings.cookie_domain,
         httponly=True,
-        secure=True, 
+        secure=(settings.env_name == "production"),
         samesite="lax"
     )
 

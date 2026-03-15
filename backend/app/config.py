@@ -5,6 +5,9 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
+
+    env_name: str = "development"
+    cookie_domain: str = None
     
     redis_url: str
     frontend_url: str
