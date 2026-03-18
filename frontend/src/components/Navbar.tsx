@@ -8,8 +8,13 @@ export default function Navbar() {
     const { logout } = useAuth();
     const pathname = usePathname();
 
-    const hiddenPaths = ["/", "/login", "/signup", "/privacy"];
-    if (hiddenPaths.includes(pathname)) {
+    /*  const hiddenPaths = ["/", "/login", "/signup", "/privacy"];
+     if (hiddenPaths.includes(pathname)) {
+         return null;
+     }
+  */
+    const visiblePaths = ["/generate", "/library"];
+    if (!visiblePaths.includes(pathname)) {
         return null;
     }
 
