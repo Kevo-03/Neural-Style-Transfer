@@ -55,7 +55,7 @@ async def generate_image(
         "message": "Images uploaded to cloud successfully. Processing started."
     }
 
-@router.get("/status/{image_id}")
+@router.get("/status/{image_id}", response_model=ImageLibraryResponse)
 def get_image_status(image_id: int ,session: Annotated[Session, Depends(get_session)], current_user: Annotated[User, Depends(get_current_user)]):
     image = session.get(Image, image_id)
 
