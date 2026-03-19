@@ -73,7 +73,7 @@ def test_delete_user_account(mock_delete, client, session):
     assert response.status_code == 200
     assert response.json()["message"] == "Account and all associated cloud data successfully deleted."
 
-    user_in_db = session.exec(select(User).where(User.email == "has_images@test.com")).first()
+    user_in_db = session.exec(select(User).where(User.email == "delete@test.com")).first()
     assert user_in_db is None
     
     set_cookie = response.headers.get("set-cookie")
@@ -113,3 +113,31 @@ def test_delete_user_account_with_images(mock_delete, client, session):
     mock_delete.assert_any_call("fake_bucket/content_123.jpg")
     mock_delete.assert_any_call("fake_bucket/style_123.jpg")
     mock_delete.assert_any_call("fake_bucket/result_123.jpg")
+
+# --- 5. ADDITIONAL EDGE-CASE TESTS ---
+
+def test_signup_invalid_email(client):
+    response = client.post("/auth/signup", json={"email": "not-an-email", "password": "pass"})
+    assert response.status_code == 422
+
+def test_login_nonexistent_user(client):
+    response = client.post(
+        "/auth/login",
+        data={"username": "ghost@test.com", "password": "pass"}
+    )
+    assert response.status_code == 401
+
+def test_logout(client):
+    client.post("/auth/signup", json={"email": "logout@test.com", "password": "pass"})
+    client.post("/auth/login", data={"username": "logout@test.com", "password": "pass"})
+
+    response = client.post("/auth/logout")
+    assert response.status_code == 200
+
+    set_cookie = response.headers.get("set-cookie")
+    assert "access_token=" in set_cookie
+    assert 'Max-Age=0' in set_cookie or "expires=" in set_cookie.lower()
+
+def test_get_me_unauthenticated(client):
+    response = client.get("/auth/me")
+    assert response.status_code == 401

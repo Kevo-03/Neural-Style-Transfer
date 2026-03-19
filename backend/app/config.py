@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Optional
 
 class Settings(BaseSettings):
    
@@ -7,7 +8,7 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     env_name: str = "development"
-    cookie_domain: str = None
+    cookie_domain: Optional[str] = None
     
     redis_url: str
     frontend_url: str
