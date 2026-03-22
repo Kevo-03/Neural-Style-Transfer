@@ -6,8 +6,13 @@ function isTokenExpired(token: string): boolean {
         const parts = token.split('.');
         if (parts.length !== 3) return true;
 
-        // Decode the payload (second part of the JWT)
-        const payload = JSON.parse(atob(parts[1]));
+        // JWTs use base64url encoding, convert to standard base64 for atob
+        const base64 = parts[1]
+            .replace(/-/g, '+')
+            .replace(/_/g, '/')
+            .padEnd(parts[1].length + (4 - parts[1].length % 4) % 4, '=');
+
+        const payload = JSON.parse(atob(base64));
 
         if (!payload.exp) return true;
 
