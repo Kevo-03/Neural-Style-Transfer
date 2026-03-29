@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 export default function SignupPage() {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -17,6 +17,11 @@ export default function SignupPage() {
         e.preventDefault();
         setError("");
 
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters long.");
+            return;
+        }
+
         if (password !== confirmPassword) {
             setError("Passwords do not match!");
             return;
@@ -25,9 +30,9 @@ export default function SignupPage() {
         setIsLoading(true);
 
         try {
-            await signup(email, password);
+            await signup(username, password);
         } catch (err) {
-            setError("Could not create account. Email might already exist.");
+            setError("Could not create account. Username might already exist.");
         } finally {
             setIsLoading(false);
         }
@@ -51,21 +56,24 @@ export default function SignupPage() {
 
                     <div className="space-y-4">
                         <input
-                            type="email"
+                            type="text"
                             required
                             className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
-                            placeholder="Email address"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                         />
-                        <input
-                            type="password"
-                            required
-                            className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <div>
+                            <input
+                                type="password"
+                                required
+                                className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Minimum 8 characters</p>
+                        </div>
                         <input
                             type="password"
                             required

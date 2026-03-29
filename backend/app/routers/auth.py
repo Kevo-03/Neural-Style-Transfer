@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response ,status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlmodel import Session, select
 from app.models import User, Image
 from app.db import get_session
@@ -10,7 +10,6 @@ from app.storage import delete_from_spaces
 from app.config import settings
 from datetime import timedelta
 from typing import Annotated
-from app.config import settings
 
 
 router = APIRouter(prefix="/auth")
@@ -18,17 +17,17 @@ router = APIRouter(prefix="/auth")
 @router.post("/signup", response_model=UserResponse)
 def create_user(user: UserCreate, session: Annotated[Session, Depends(get_session)]):
 
-    statement = select(User).where(User.email == user.email)
+    statement = select(User).where(User.username == user.username)
     existing_user = session.exec(statement).first()
 
     if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="Username already registered")
 
     hashed_password = get_password_hash(user.password)
     new_user = User(
-        email=user.email, 
+        username=user.username,
         hashed_password=hashed_password
-   )
+    )
     session.add(new_user)
     session.commit()
     session.refresh(new_user)
@@ -37,34 +36,34 @@ def create_user(user: UserCreate, session: Annotated[Session, Depends(get_sessio
 @router.post("/login")
 def login(
     response: Response,
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], 
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: Annotated[Session, Depends(get_session)]
 ):
-    statement = select(User).where(User.email == form_data.username)
+    statement = select(User).where(User.username == form_data.username)
     user = session.exec(statement).first()
-    
+
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
+            detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-        
+
     access_token_expires = timedelta(minutes=settings.access_token_expire_minutes)
-    
+
     access_token = create_access_token(
-        data={"sub": user.email}, 
+        data={"sub": user.username},
         expires_delta=access_token_expires
     )
 
     response.set_cookie(
         key="access_token",
         value=access_token,
-        httponly=True,   
-        secure=(settings.env_name == "production"),   #<--- Set to False if testing on localhost without HTTPS
-        samesite="lax",  
+        httponly=True,
+        secure=(settings.env_name == "production"),
+        samesite="lax",
         domain=settings.cookie_domain,
-        max_age=settings.access_token_expire_minutes * 60 
+        max_age=settings.access_token_expire_minutes * 60
     )
 
     return {"message": "Successfully logged in"}
@@ -83,11 +82,11 @@ def logout(response: Response):
 
 @router.get("/me")
 def get_me(current_user: Annotated[User, Depends(get_current_user)]):
-    return {"email": current_user.email}
+    return {"username": current_user.username}
 
 @router.delete("/account")
 async def delete_user_account(
-    response: Response, 
+    response: Response,
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(get_current_user)]
 ):
@@ -101,7 +100,7 @@ async def delete_user_account(
             await delete_from_spaces(image.content_path)
         if image.style_path:
             await delete_from_spaces(image.style_path)
-        
+
         session.delete(image)
 
     session.delete(current_user)

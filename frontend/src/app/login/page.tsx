@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -19,9 +19,9 @@ export default function LoginPage() {
         setError("");
 
         try {
-            await login(email, password);
+            await login(username, password);
         } catch (err) {
-            setError("Invalid email or password. Please try again.");
+            setError("Invalid username or password. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -46,12 +46,12 @@ export default function LoginPage() {
                     <div className="space-y-4">
                         <div>
                             <input
-                                type="email"
+                                type="text"
                                 required
                                 className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
-                                placeholder="Email address"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                             />
                         </div>
                         <div>

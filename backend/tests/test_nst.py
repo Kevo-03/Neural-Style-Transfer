@@ -94,7 +94,7 @@ def test_generate_image_upload_failure(mock_upload, authenticated_client):
 # ══════════════════════════════════════════════════════════════════════════
 
 def test_get_image_status_success(authenticated_client, session, mock_spaces):
-    user = session.exec(select(User).where(User.email == "user_a@test.com")).first()
+    user = session.exec(select(User).where(User.username == "user_a")).first()
 
     # seed mock S3 with a result object
     mock_spaces.put_object(Bucket="test-bucket", Key="result/1.jpg", Body=b"result-data")
@@ -126,7 +126,7 @@ def test_get_image_status_not_found(authenticated_client):
 
 
 def test_get_image_status_forbidden(authenticated_client, second_authenticated_client, session, mock_spaces):
-    user_a = session.exec(select(User).where(User.email == "user_a@test.com")).first()
+    user_a = session.exec(select(User).where(User.username == "user_a")).first()
     image = Image(
         user_id=user_a.id,
         content_path=f"{MOCK_BASE_URL}/c.jpg",
@@ -147,7 +147,7 @@ def test_get_image_status_forbidden(authenticated_client, second_authenticated_c
 # ══════════════════════════════════════════════════════════════════════════
 
 def test_get_library_success(authenticated_client, session, mock_spaces):
-    user = session.exec(select(User).where(User.email == "user_a@test.com")).first()
+    user = session.exec(select(User).where(User.username == "user_a")).first()
 
     img1 = Image(
         user_id=user.id, content_path=f"{MOCK_BASE_URL}/c1.jpg",
@@ -173,8 +173,8 @@ def test_get_library_empty(authenticated_client):
 
 
 def test_get_library_isolation(authenticated_client, second_authenticated_client, session, mock_spaces):
-    user_a = session.exec(select(User).where(User.email == "user_a@test.com")).first()
-    user_b = session.exec(select(User).where(User.email == "user_b@test.com")).first()
+    user_a = session.exec(select(User).where(User.username == "user_a")).first()
+    user_b = session.exec(select(User).where(User.username == "user_b")).first()
 
     session.add(Image(
         user_id=user_a.id, content_path=f"{MOCK_BASE_URL}/a.jpg",
@@ -196,7 +196,7 @@ def test_get_library_isolation(authenticated_client, second_authenticated_client
 # ══════════════════════════════════════════════════════════════════════════
 
 def test_delete_image_success(authenticated_client, session, mock_spaces):
-    user = session.exec(select(User).where(User.email == "user_a@test.com")).first()
+    user = session.exec(select(User).where(User.username == "user_a")).first()
 
     # seed mock S3 with objects
     mock_spaces.put_object(Bucket="test-bucket", Key="content/del.jpg", Body=b"c")
@@ -232,7 +232,7 @@ def test_delete_image_not_found(authenticated_client):
 
 
 def test_delete_image_forbidden(authenticated_client, second_authenticated_client, session, mock_spaces):
-    user_a = session.exec(select(User).where(User.email == "user_a@test.com")).first()
+    user_a = session.exec(select(User).where(User.username == "user_a")).first()
     image = Image(
         user_id=user_a.id, content_path=f"{MOCK_BASE_URL}/c.jpg",
         style_path=f"{MOCK_BASE_URL}/s.jpg", status="PENDING",

@@ -28,25 +28,25 @@ def client_fixture(session: Session):
 
 # ── auth helpers ─────────────────────────────────────────────────────────
 
-def _signup_and_login(client: TestClient, email: str, password: str = "testpass123"):
+def _signup_and_login(client: TestClient, username: str, password: str = "testpass123"):
     """Sign up, log in, and set the auth cookie on the client."""
-    client.post("/auth/signup", json={"email": email, "password": password})
-    login_res = client.post("/auth/login", data={"username": email, "password": password})
+    client.post("/auth/signup", json={"username": username, "password": password})
+    login_res = client.post("/auth/login", data={"username": username, "password": password})
     token = login_res.headers.get("set-cookie").split("access_token=")[1].split(";")[0]
     client.cookies.set("access_token", token)
     return client
 
 @pytest.fixture(name="authenticated_client")
 def authenticated_client_fixture(session: Session):
-    """TestClient logged in as user_a@test.com."""
+    """TestClient logged in as user_a."""
     client = TestClient(app)
-    return _signup_and_login(client, "user_a@test.com")
+    return _signup_and_login(client, "user_a")
 
 @pytest.fixture(name="second_authenticated_client")
 def second_authenticated_client_fixture(session: Session):
-    """Separate TestClient logged in as user_b@test.com (for cross-user tests)."""
+    """Separate TestClient logged in as user_b (for cross-user tests)."""
     client = TestClient(app)
-    return _signup_and_login(client, "user_b@test.com")
+    return _signup_and_login(client, "user_b")
 
 # ── moto S3 mock (DigitalOcean Spaces) ───────────────────────────────────
 
