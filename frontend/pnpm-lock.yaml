@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       axios:
-        specifier: ^1.13.5
+        specifier: 1.13.5
         version: 1.13.5
       lucide-react:
         specifier: ^0.574.0
