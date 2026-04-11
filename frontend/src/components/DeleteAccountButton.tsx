@@ -37,7 +37,7 @@ export default function DeleteAccountButton() {
     };
 
     return (
-        <div className="mt-8">
+        <div>
             <button
                 onClick={() => setIsModalOpen(true)}
                 className="text-red-500 hover:text-red-400 font-semibold text-sm transition-colors border border-red-500/30 hover:bg-red-900/20 px-4 py-2 rounded"

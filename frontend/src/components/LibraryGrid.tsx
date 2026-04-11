@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import api from "@/lib/api";
-import DeleteAccountButton from "@/components/DeleteAccountButton";
 import { Loader2, Download, Trash2, AlertCircle, X } from "lucide-react";
 
 interface ImageJob {
@@ -186,9 +185,6 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
                 </div>
             )}
 
-            <div className="mt-16 pt-8 border-t border-gray-800">
-                <DeleteAccountButton />
-            </div>
         </>
     );
 }
