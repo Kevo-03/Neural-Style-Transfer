@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
-import DeleteAccountButton from "@/components/DeleteAccountButton";
 
 export default function Navbar() {
     const { logout } = useAuth();
@@ -45,7 +44,6 @@ export default function Navbar() {
                     >
                         My Library
                     </Link>
-                    <DeleteAccountButton />
                     <button
                         onClick={logout}
                         className="rounded-full border border-gray-600 bg-gray-800 px-5 py-2 text-sm font-bold text-white hover:bg-gray-700 transition shadow-lg"

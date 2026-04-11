@@ -1,19 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createPortal } from 'react-dom';
 
 export default function DeleteAccountButton() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [error, setError] = useState('');
-    const [mounted, setMounted] = useState(false);
     const router = useRouter();
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     const executeDeletion = async () => {
         setIsDeleting(true);
@@ -43,7 +37,7 @@ export default function DeleteAccountButton() {
     };
 
     return (
-        <div>
+        <div className="mt-8">
             <button
                 onClick={() => setIsModalOpen(true)}
                 className="text-red-500 hover:text-red-400 font-semibold text-sm transition-colors border border-red-500/30 hover:bg-red-900/20 px-4 py-2 rounded"
@@ -53,8 +47,8 @@ export default function DeleteAccountButton() {
 
             {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
 
-            {mounted && isModalOpen && createPortal(
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
                     <div className="bg-gray-900 border border-red-500/50 rounded-lg p-6 max-w-md w-full mx-4 shadow-2xl">
                         <h3 className="text-xl font-bold text-white mb-3">Are you absolutely sure?</h3>
                         <p className="text-gray-400 text-sm mb-6">
@@ -79,8 +73,7 @@ export default function DeleteAccountButton() {
                             </button>
                         </div>
                     </div>
-                </div>,
-                document.body
+                </div>
             )}
         </div>
     );
