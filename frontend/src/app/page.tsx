@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import GeneratorWidget from "@/components/GeneratorWidget";
 
 export default function Home() {
   return (
-    <>
-      <div className="flex flex-col items-center justify-center bg-gray-900 px-4 text-center pt-32 pb-16">
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col items-center bg-gray-900 px-4 text-center pt-32 pb-8">
         <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-6xl">
           <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent block mb-4 text-6xl sm:text-7xl">
             NeuralArt
@@ -17,11 +16,17 @@ export default function Home() {
             AI
           </span>
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-300">
-          Upload your photos and apply the visual style of famous artworks using our advanced Neural Style Transfer engine.
+        <p className="mx-auto mt-6 max-w-1xl text-lg text-gray-300">
+          Upload your photos and apply the visual style of your favourite artwork using Neural Style Transfer.
         </p>
 
         <div className="mt-10 mb-24 flex flex-col justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+          <Link
+            href="/try"
+            className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 text-base font-bold text-white hover:opacity-90 transition md:py-4 md:text-lg"
+          >
+            Try It Out
+          </Link>
           <Link
             href="/signup"
             className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 text-base font-bold text-white hover:opacity-90 transition md:py-4 md:text-lg"
@@ -36,7 +41,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="w-full max-w-5xl mx-auto mb-24 px-4">
+        <div className="w-full max-w-5xl mx-auto mb-8 px-4">
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
 
             <div className="flex flex-col items-center">
@@ -92,22 +97,11 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full max-w-5xl mt-12 mb-24 pb-12">
-          <h2 className="text-3xl font-bold text-white mb-2">Try it right now</h2>
-          <p className="text-gray-400 mb-10">No credit card or account required.</p>
-
-          <GeneratorWidget isPublic={true} />
-        </div>
       </div>
 
-      <footer className="w-full bg-gray-900 py-6 text-center text-gray-500 text-sm border-t border-gray-800">
-        <p>&copy; {new Date().getFullYear()} NeuralArt. All rights reserved.</p>
-        <div className="mt-2 space-x-4">
-          <Link href="/privacy" className="hover:text-purple-400 transition">
-            Privacy Policy
-          </Link>
-        </div>
+      <footer className="w-full bg-gray-900 py-3 text-center text-gray-500 text-sm border-t border-gray-800">
+        <p>&copy; {new Date().getFullYear()} NeuralArt · <Link href="/privacy" className="hover:text-purple-400 transition">Privacy Policy</Link></p>
       </footer>
-    </>
+    </div>
   );
 }
