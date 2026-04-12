@@ -26,14 +26,40 @@ def session_fixture():
 def client_fixture(session: Session):
     yield TestClient(app)
 
-@pytest.fixture(autouse=True, name="mock_rate_limiter_storage")
+@pytest.fixture(autouse=True, name="mock_rate_limiter_storage_fixture")
 def mock_rate_limiter_storage_fixture():
+    """
+    Isolate rate limit state between tests.
+
+    slowapi captures the key_func by reference at decoration time into each
+    Limit object. Patching the module-level name has no effect. The only
+    reliable fix is to directly swap key_func on every stored Limit object.
+
+    Each test gets a unique UUID as its "IP", so rate-limit buckets never
+    bleed between tests.
+    """
+    import uuid
     from app.rate_limiter import limiter
-    from limits.storage import MemoryStorage
-    # slowapi wraps `limits` — the real storage is at limiter._limiter._storage
-    limiter._limiter._storage = MemoryStorage()
+
+    unique_ip = str(uuid.uuid4())
+    unique_key_func = lambda request: unique_ip  # noqa: E731
+
+    # Collect all Limit objects from all routes
+    all_limits = [
+        lim
+        for limits in limiter._route_limits.values()
+        for lim in limits
+    ]
+
+    originals = {}
+    for lim in all_limits:
+        originals[id(lim)] = lim.key_func
+        lim.key_func = unique_key_func
+
     yield
-    limiter._limiter._storage = MemoryStorage()
+
+    for lim in all_limits:
+        lim.key_func = originals[id(lim)]
 
 # ── auth helpers ─────────────────────────────────────────────────────────
 

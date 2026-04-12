@@ -346,14 +346,19 @@ def test_generate_public_roundtrip(client, mock_spaces, celery_eager):
 
 @patch("app.routers.nst.celery_app.send_task", side_effect=Exception("Broker unreachable"))
 def test_generate_public_celery_down(mock_send_task, client, mock_spaces):
-    """Verify that when Celery broker is unreachable, the error propagates
-    (the endpoint has no try/except around send_task)."""
-    with pytest.raises(Exception, match="Broker unreachable"):
-        client.post(
-            "/generate-public",
-            files={
-                "content_file": _fake_upload_file(),
-                "style_file": _fake_upload_file(),
-            },
-        )
+    """When Celery broker is unreachable the endpoint should return 500
+    and clean up both uploaded files so they don't orphan in the bucket."""
+    response = client.post(
+        "/generate-public",
+        files={
+            "content_file": _fake_upload_file(),
+            "style_file": _fake_upload_file(),
+        },
+    )
 
+    assert response.status_code == 500
+    assert "queue" in response.json()["detail"].lower()
+
+    # Both uploaded files must have been deleted — bucket should be empty
+    remaining = mock_spaces.list_objects_v2(Bucket="test-bucket")
+    assert remaining.get("KeyCount", 0) == 0
