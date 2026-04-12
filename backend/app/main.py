@@ -5,6 +5,9 @@ from app.db import create_db_and_tables
 from app.config import settings
 from .routers import nst, auth
 import os
+from slowapi.errors import RateLimitExceeded
+from slowapi import _rate_limit_exceeded_handler
+from app.rate_limiter import limiter
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -20,6 +23,9 @@ app = FastAPI(
     title="Neural Style Transfer API", 
     lifespan=lifespan
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 raw_origins = settings.frontend_url.split(",")
 origins = [origin.strip() for origin in raw_origins]

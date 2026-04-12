@@ -86,9 +86,13 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
             setStatus("PROCESSING");
             pollStatus(trackingId, isPublic);
 
-        } catch (error) {
+        } catch (error: any) {
             console.error("Upload failed", error);
-            setErrorMessage("Upload failed. If you are a guest, you may have hit your daily limit.");
+            if (error?.response?.status === 429) {
+                setErrorMessage("You are generating images too quickly. Please wait a minute and try again.");
+            } else {
+                setErrorMessage("Upload failed. If you are a guest, you may have hit your daily limit.");
+            }
             setStatus("FAILED");
         } finally {
             setIsUploading(false);
@@ -202,7 +206,17 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         <p className="text-sm text-gray-500">This can take a few seconds.</p>
                     </div>
                 )}
-                {status === "FAILED" && <div className="flex items-center gap-3 text-red-500 text-xl"><AlertCircle className="w-6 h-6" /> Something went wrong.</div>}
+                {status === "FAILED" && (
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="flex items-center gap-3 text-red-500 text-xl"><AlertCircle className="w-6 h-6" /> Something went wrong.</div>
+                        <button
+                            onClick={resetWidget}
+                            className="px-6 py-3 border border-gray-600 bg-gray-800 rounded-lg hover:bg-gray-700 transition font-semibold text-sm"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                )}
 
                 {status === "COMPLETED" && (
                     <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">

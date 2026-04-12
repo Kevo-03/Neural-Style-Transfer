@@ -149,3 +149,16 @@ def test_logout(client):
 def test_get_me_unauthenticated(client):
     response = client.get("/auth/me")
     assert response.status_code == 401
+
+def test_rate_limiting_login(client):
+    # Hit the login endpoint 6 times in rapid succession
+    for _ in range(5):
+        response = client.post("/auth/login", data={"username": "testuser", "password": "WRONG_PASSWORD"})
+        # Should be 401 unauthorized because the user doesn't exist/wrong password
+        assert response.status_code == 401
+    
+    # The 6th request should be blocked by rate limiter (HTTP 429)
+    response = client.post("/auth/login", data={"username": "testuser", "password": "WRONG_PASSWORD"})
+    assert response.status_code == 429
+    assert "Rate limit exceeded" in response.json()["error"]
+

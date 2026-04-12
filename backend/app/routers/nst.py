@@ -1,4 +1,5 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Depends, status
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status, Request
+from app.rate_limiter import limiter
 from sqlmodel import Session, select, desc
 from celery import Celery
 from celery.result import AsyncResult
@@ -16,7 +17,9 @@ router = APIRouter()
 celery_app = Celery("nst_worker", broker=settings.redis_url, backend=settings.redis_url)
 
 @router.post("/generate")
+@limiter.limit("3/minute")
 async def generate_image(  
+    request: Request,
     content_file: Annotated[UploadFile, File(...)],
     style_file: Annotated[UploadFile, File(...)],
     session: Annotated[Session, Depends(get_session)],
@@ -26,31 +29,46 @@ async def generate_image(
     style_url = await upload_to_spaces(style_file, folder="style")
 
     if not content_url or not style_url:
+        # Clean up whichever file did upload before raising
+        if content_url:
+            await delete_from_spaces(content_url)
+        if style_url:
+            await delete_from_spaces(style_url)
         raise HTTPException(
             status_code=500, 
             detail="Failed to upload images to cloud storage. Please try again."
         )
-    
+
     new_image = Image(
         content_path=content_url,
         style_path=style_url,
         status="PENDING",
         user_id=current_user.id
     )
-    
-    session.add(new_image)
-    session.commit()
-    session.refresh(new_image)
 
-    task = celery_app.send_task(
-        "generate_art", 
-        args=[content_url, style_url, new_image.id]
-    )
+    try:
+        session.add(new_image)
+        session.commit()
+        session.refresh(new_image)
+
+        task = celery_app.send_task(
+            "generate_art",
+            args=[content_url, style_url, new_image.id]
+        )
+    except Exception:
+        # Roll back the DB record and delete the orphan files
+        session.rollback()
+        await delete_from_spaces(content_url)
+        await delete_from_spaces(style_url)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to queue task. Your images were not saved. Please try again."
+        )
 
     return {
-        "job_id": task.id, 
+        "job_id": task.id,
         "database_id": new_image.id,
-        "status": "submitted", 
+        "status": "submitted",
         "task_id": task.id,
         "message": "Images uploaded to cloud successfully. Processing started."
     }
@@ -119,19 +137,40 @@ async def delete_image(
     return {"message": "Image and cloud files deleted successfully"}
 
 @router.post("/generate-public")
+@limiter.limit("3/minute")
 async def generate_public_art(
-    content_file: UploadFile = File(...), 
+    request: Request,
+    content_file: UploadFile = File(...),
     style_file: UploadFile = File(...)
 ):
     content_url = await upload_to_spaces(content_file, "temp-public/content")
     style_url = await upload_to_spaces(style_file, "temp-public/style")
-    
-    task = celery_app.send_task(
-        "generate_art",
-        args=[content_url, style_url],
-        kwargs={"image_id": None, "is_public": True} 
-    )
-    
+
+    if not content_url or not style_url:
+        if content_url:
+            await delete_from_spaces(content_url)
+        if style_url:
+            await delete_from_spaces(style_url)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to upload images to cloud storage. Please try again."
+        )
+
+    try:
+        task = celery_app.send_task(
+            "generate_art",
+            args=[content_url, style_url],
+            kwargs={"image_id": None, "is_public": True}
+        )
+    except Exception:
+        # Clean up uploaded files so they don’t orphan in the bucket
+        await delete_from_spaces(content_url)
+        await delete_from_spaces(style_url)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to queue task. Please try again."
+        )
+
     return {"task_id": task.id}
 
 @router.get("/status/public/{task_id}")

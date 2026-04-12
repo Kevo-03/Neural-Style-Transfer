@@ -32,8 +32,12 @@ export default function SignupPage() {
 
         try {
             await signup(username, password);
-        } catch (err) {
-            setError("Could not create account. Username might already exist.");
+        } catch (err: any) {
+            if (err?.response?.status === 429) {
+                setError("Too many sign up attempts. Please try again later.");
+            } else {
+                setError("Could not create account. Username might already exist.");
+            }
         } finally {
             setIsLoading(false);
         }

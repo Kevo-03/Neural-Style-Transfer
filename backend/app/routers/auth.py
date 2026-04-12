@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Request
+from app.rate_limiter import limiter
 from sqlmodel import Session, select
 from app.models import User, Image
 from app.db import get_session
@@ -15,7 +16,8 @@ from typing import Annotated
 router = APIRouter(prefix="/auth")
 
 @router.post("/signup", response_model=UserResponse)
-def create_user(user: UserCreate, session: Annotated[Session, Depends(get_session)]):
+@limiter.limit("5/minute")
+def create_user(request: Request, user: UserCreate, session: Annotated[Session, Depends(get_session)]):
 
     statement = select(User).where(User.username == user.username)
     existing_user = session.exec(statement).first()
@@ -34,7 +36,9 @@ def create_user(user: UserCreate, session: Annotated[Session, Depends(get_sessio
     return new_user
 
 @router.post("/login")
+@limiter.limit("5/minute")
 def login(
+    request: Request,
     response: Response,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     session: Annotated[Session, Depends(get_session)]

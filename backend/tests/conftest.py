@@ -26,6 +26,15 @@ def session_fixture():
 def client_fixture(session: Session):
     yield TestClient(app)
 
+@pytest.fixture(autouse=True, name="mock_rate_limiter_storage")
+def mock_rate_limiter_storage_fixture():
+    from app.rate_limiter import limiter
+    from limits.storage import MemoryStorage
+    # slowapi wraps `limits` — the real storage is at limiter._limiter._storage
+    limiter._limiter._storage = MemoryStorage()
+    yield
+    limiter._limiter._storage = MemoryStorage()
+
 # ── auth helpers ─────────────────────────────────────────────────────────
 
 def _signup_and_login(client: TestClient, username: str, password: str = "testpass123"):

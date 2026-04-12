@@ -20,8 +20,12 @@ export default function LoginPage() {
 
         try {
             await login(username, password);
-        } catch (err) {
-            setError("Invalid username or password. Please try again.");
+        } catch (err: any) {
+            if (err?.response?.status === 429) {
+                setError("Too many login attempts. Please try again later.");
+            } else {
+                setError("Invalid username or password. Please try again.");
+            }
         } finally {
             setIsLoading(false);
         }
