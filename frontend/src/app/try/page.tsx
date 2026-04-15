@@ -22,13 +22,8 @@ export default function TryPage() {
                 </div>
             </div>
 
-            <footer className="w-full bg-gray-900 py-6 text-center text-gray-500 text-sm border-t border-gray-800">
-                <p>&copy; {new Date().getFullYear()} NeuralArt. All rights reserved.</p>
-                <div className="mt-2 space-x-4">
-                    <Link href="/privacy" className="hover:text-purple-400 transition">
-                        Privacy Policy
-                    </Link>
-                </div>
+            <footer className="w-full bg-gray-900 py-3 text-center text-gray-500 text-sm border-t border-gray-800">
+                <p>&copy; {new Date().getFullYear()} NeuralArt · <Link href="/privacy" className="hover:text-purple-400 transition">Privacy Policy</Link></p>
             </footer>
         </div>
     );
