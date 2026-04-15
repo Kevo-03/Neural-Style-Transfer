@@ -53,7 +53,7 @@ export default function SignupPage() {
                         alt="Neural Style Transfer example"
                         fill
                         priority
-                        placeholder="blur" blurDataURL="..."
+                        unoptimized={true}
                         sizes="448px"
                         className="object-cover"
                     />
