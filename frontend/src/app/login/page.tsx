@@ -5,7 +5,6 @@ import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import demoOutput from "@/assets/demo-output.jpg";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
@@ -38,11 +37,11 @@ export default function LoginPage() {
                 {/* NST showcase card */}
                 <div className="hidden lg:flex w-[28rem] rounded-l-2xl border border-r-0 border-gray-700 overflow-hidden relative">
                     <Image
-                        src={demoOutput}
+                        src="/demo-output.jpg"
                         alt="Neural Style Transfer example"
                         fill
                         priority
-                        placeholder="blur"
+                        unoptimized={true}
                         sizes="448px"
                         className="object-cover"
                     />

@@ -2,9 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import demoContent from "@/assets/demo-content.jpg";
-import demoStyle from "@/assets/demo-style.jpg";
-import demoOutput from "@/assets/demo-output.jpg";
 
 export default function Home() {
   return (
@@ -51,11 +48,11 @@ export default function Home() {
               <div className="h-40 w-40 sm:h-48 sm:w-48 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
                 <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
                   <Image
-                    src={demoContent}
+                    src="/demo-content.jpg"
                     alt="Original Content"
                     fill
                     priority
-                    placeholder="blur"
+                    unoptimized={true}
                     sizes="(max-width: 640px) 160px, 192px"
                     className="object-cover opacity-80 hover:opacity-100 transition"
                   />
@@ -70,11 +67,11 @@ export default function Home() {
               <div className="h-40 w-40 sm:h-48 sm:w-48 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
                 <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
                   <Image
-                    src={demoStyle}
+                    src="/demo-style.jpg"
                     alt="Art Style"
                     fill
                     priority
-                    placeholder="blur"
+                    unoptimized={true}
                     sizes="(max-width: 640px) 160px, 192px"
                     className="object-cover opacity-80 hover:opacity-100 transition"
                   />
@@ -90,11 +87,11 @@ export default function Home() {
               <div className="h-48 w-48 sm:h-56 sm:w-56 rounded-xl p-[2px] bg-gradient-to-r from-purple-400 to-pink-600 shadow-[0_0_25px_rgba(236,72,153,0.4)]">
                 <div className="relative h-full w-full rounded-[10px] overflow-hidden bg-gray-800">
                   <Image
-                    src={demoOutput}
+                    src="/demo-output.jpg"
                     alt="Final AI Generation"
                     fill
                     priority
-                    placeholder="blur"
+                    unoptimized={true}
                     sizes="(max-width: 640px) 192px, 224px"
                     className="object-cover"
                   />
