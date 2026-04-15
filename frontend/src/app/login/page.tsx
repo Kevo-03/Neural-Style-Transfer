@@ -41,7 +41,6 @@ export default function LoginPage() {
                         alt="Neural Style Transfer example"
                         fill
                         priority
-                        unoptimized={true}
                         sizes="448px"
                         className="object-cover"
                     />
