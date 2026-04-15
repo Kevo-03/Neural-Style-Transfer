@@ -52,6 +52,7 @@ export default function Home() {
                     alt="Original Content"
                     fill
                     priority
+                    unoptimized={true}
                     sizes="(max-width: 640px) 160px, 192px"
                     className="object-cover opacity-80 hover:opacity-100 transition"
                   />
@@ -70,6 +71,7 @@ export default function Home() {
                     alt="Art Style"
                     fill
                     priority
+                    unoptimized={true}
                     sizes="(max-width: 640px) 160px, 192px"
                     className="object-cover opacity-80 hover:opacity-100 transition"
                   />
@@ -89,6 +91,7 @@ export default function Home() {
                     alt="Final AI Generation"
                     fill
                     priority
+                    unoptimized={true}
                     sizes="(max-width: 640px) 192px, 224px"
                     className="object-cover"
                   />

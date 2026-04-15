@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import api from "@/lib/api";
 import DeleteAccountButton from "@/components/DeleteAccountButton";
 import { Loader2, Download, Trash2, AlertCircle, X } from "lucide-react";
-import Image from "next/image";
 
 interface ImageJob {
     id: number;
@@ -88,16 +87,12 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
                     {images.map((img) => (
                         <div key={img.id} className="overflow-hidden rounded-xl bg-gray-800 border border-gray-700 shadow-xl transition hover:border-purple-500/50">
                             {img.status === "COMPLETED" && img.result ? (
-                                <div className="relative h-64 w-full">
-                                    <Image
-                                        src={img.result}
-                                        alt={`Generated Art ${img.id}`}
-                                        crossOrigin="anonymous"
-                                        fill
-                                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                        className="object-cover"
-                                    />
-                                </div>
+                                <img
+                                    src={img.result}
+                                    alt={`Generated Art ${img.id}`}
+                                    crossOrigin="anonymous"
+                                    className="h-64 w-full object-cover"
+                                />
                             ) : (
                                 <div className="flex h-64 w-full items-center justify-center bg-gray-900 text-sm font-medium text-gray-500 border-b border-gray-700">
                                     <span className="flex items-center gap-2">
