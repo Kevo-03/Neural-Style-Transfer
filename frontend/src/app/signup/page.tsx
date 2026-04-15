@@ -52,7 +52,7 @@ export default function SignupPage() {
                         src="/signup_photo.jpg"
                         alt="Neural Style Transfer example"
                         fill
-                        priority
+                        preload
                         unoptimized={true}
                         sizes="448px"
                         className="object-cover"

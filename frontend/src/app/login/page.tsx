@@ -40,7 +40,7 @@ export default function LoginPage() {
                         src="/demo-output.jpg"
                         alt="Neural Style Transfer example"
                         fill
-                        priority
+                        preload
                         unoptimized={true}
                         sizes="448px"
                         className="object-cover"
