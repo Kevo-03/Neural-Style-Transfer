@@ -27,8 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="preload" href="/demo-output.jpg" as="image" />
-        <link rel="preload" href="/signup_photo.jpg" as="image" />
+        <link rel="preload" href="/demo-content.jpg" as="image" fetchPriority="high" />
+        <link rel="preload" href="/demo-style.jpg" as="image" fetchPriority="high" />
+        <link rel="preload" href="/demo-output.jpg" as="image" fetchPriority="high" />
+        <link rel="preload" href="/signup_photo.jpg" as="image" fetchPriority="high" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-900 text-white min-h-screen`}
