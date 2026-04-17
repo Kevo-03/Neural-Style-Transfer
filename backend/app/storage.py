@@ -24,7 +24,7 @@ s3_client = boto3.client(
     aws_secret_access_key=settings.do_secret_key
 )
 
-async def upload_to_spaces(file: UploadFile, folder: str = "uploads") -> str:
+def upload_to_spaces(file: UploadFile, folder: str = "uploads") -> str:
   
     file_extension = file.filename.split(".")[-1]
     unique_filename = f"{folder}/{uuid.uuid4().hex}.{file_extension}"
@@ -72,7 +72,7 @@ def get_presigned_url(file_url: str, expiration: int = 3600) -> str:
         print(f"Error generating presigned URL: {e}")
         return None
     
-async def delete_from_spaces(file_url: str):
+def delete_from_spaces(file_url: str):
    
     if not file_url:
         return

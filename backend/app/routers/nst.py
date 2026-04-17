@@ -18,7 +18,7 @@ celery_app = Celery("nst_worker", broker=settings.redis_url, backend=settings.re
 
 @router.post("/generate")
 @limiter.limit("3/minute")
-async def generate_image(  
+def generate_image(  
     request: Request,
     content_file: Annotated[UploadFile, File(...)],
     style_file: Annotated[UploadFile, File(...)],
@@ -28,15 +28,15 @@ async def generate_image(
     validate_upload(content_file)
     validate_upload(style_file)
 
-    content_url = await upload_to_spaces(content_file, folder="content")
-    style_url = await upload_to_spaces(style_file, folder="style")
+    content_url = upload_to_spaces(content_file, folder="content")
+    style_url = upload_to_spaces(style_file, folder="style")
 
     if not content_url or not style_url:
         # Clean up whichever file did upload before raising
         if content_url:
-            await delete_from_spaces(content_url)
+            delete_from_spaces(content_url)
         if style_url:
-            await delete_from_spaces(style_url)
+            delete_from_spaces(style_url)
         raise HTTPException(
             status_code=500, 
             detail="Failed to upload images to cloud storage. Please try again."
@@ -61,8 +61,8 @@ async def generate_image(
     except Exception:
         # Roll back the DB record and delete the orphan files
         session.rollback()
-        await delete_from_spaces(content_url)
-        await delete_from_spaces(style_url)
+        delete_from_spaces(content_url)
+        delete_from_spaces(style_url)
         raise HTTPException(
             status_code=500,
             detail="Failed to queue task. Your images were not saved. Please try again."
@@ -111,7 +111,7 @@ def get_user_library(session: Annotated[Session, Depends(get_session)], current_
     ]
 
 @router.delete("/library/{image_id}")
-async def delete_image(  
+def delete_image(  
     image_id: int, 
     session: Annotated[Session, Depends(get_session)], 
     current_user: Annotated[User, Depends(get_current_user)]
@@ -128,11 +128,11 @@ async def delete_image(
         )
         
     if image.result_path:
-        await delete_from_spaces(image.result_path)
+        delete_from_spaces(image.result_path)
     if image.content_path:
-        await delete_from_spaces(image.content_path)
+        delete_from_spaces(image.content_path)
     if image.style_path:
-        await delete_from_spaces(image.style_path)
+        delete_from_spaces(image.style_path)
 
     session.delete(image)
     session.commit()
@@ -141,7 +141,7 @@ async def delete_image(
 
 @router.post("/generate-public")
 @limiter.limit("3/minute")
-async def generate_public_art(
+def generate_public_art(
     request: Request,
     content_file: UploadFile = File(...),
     style_file: UploadFile = File(...)
@@ -149,14 +149,14 @@ async def generate_public_art(
     validate_upload(content_file)
     validate_upload(style_file)
 
-    content_url = await upload_to_spaces(content_file, "temp-public/content")
-    style_url = await upload_to_spaces(style_file, "temp-public/style")
+    content_url = upload_to_spaces(content_file, "temp-public/content")
+    style_url = upload_to_spaces(style_file, "temp-public/style")
 
     if not content_url or not style_url:
         if content_url:
-            await delete_from_spaces(content_url)
+            delete_from_spaces(content_url)
         if style_url:
-            await delete_from_spaces(style_url)
+            delete_from_spaces(style_url)
         raise HTTPException(
             status_code=500,
             detail="Failed to upload images to cloud storage. Please try again."
@@ -170,8 +170,8 @@ async def generate_public_art(
         )
     except Exception:
         # Clean up uploaded files so they don’t orphan in the bucket
-        await delete_from_spaces(content_url)
-        await delete_from_spaces(style_url)
+        delete_from_spaces(content_url)
+        delete_from_spaces(style_url)
         raise HTTPException(
             status_code=500,
             detail="Failed to queue task. Please try again."
@@ -180,7 +180,7 @@ async def generate_public_art(
     return {"task_id": task.id}
 
 @router.get("/status/public/{task_id}")
-async def get_public_status(task_id: str):
+def get_public_status(task_id: str):
     task_result = AsyncResult(task_id, app=celery_app)
     
     if task_result.state == "PENDING" or task_result.state == "STARTED":

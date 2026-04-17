@@ -1,6 +1,6 @@
 import pytest
 from sqlmodel import select
-from unittest.mock import patch, AsyncMock
+from unittest.mock import patch
 from app.models import User, Image
 
 # --- 1. SIGNUP TESTS ---
@@ -68,7 +68,7 @@ def test_get_me_authenticated(client):
     assert response.json()["username"] == "authuser"
 
 # --- 4. ACCOUNT DELETION TEST ---
-@patch("app.routers.auth.delete_from_spaces", new_callable=AsyncMock)
+@patch("app.routers.auth.delete_from_spaces")
 def test_delete_user_account(mock_delete, client, session):
     client.post("/auth/signup", json={"username": "deleteuser", "password": "longpassword"})
     login_res = client.post("/auth/login", data={"username": "deleteuser", "password": "longpassword"})
@@ -88,7 +88,7 @@ def test_delete_user_account(mock_delete, client, session):
     assert "access_token=" in set_cookie
     assert "Max-Age=0" in set_cookie or "expires=" in set_cookie.lower()
 
-@patch("app.routers.auth.delete_from_spaces", new_callable=AsyncMock)
+@patch("app.routers.auth.delete_from_spaces")
 def test_delete_user_account_with_images(mock_delete, client, session):
     client.post("/auth/signup", json={"username": "has_images", "password": "longpassword"})
     login_res = client.post("/auth/login", data={"username": "has_images", "password": "longpassword"})

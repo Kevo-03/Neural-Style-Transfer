@@ -89,7 +89,7 @@ def get_me(current_user: Annotated[User, Depends(get_current_user)]):
     return {"username": current_user.username}
 
 @router.delete("/account")
-async def delete_user_account(
+def delete_user_account(
     response: Response,
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(get_current_user)]
@@ -99,11 +99,11 @@ async def delete_user_account(
 
     for image in user_images:
         if image.result_path:
-            await delete_from_spaces(image.result_path)
+            delete_from_spaces(image.result_path)
         if image.content_path:
-            await delete_from_spaces(image.content_path)
+            delete_from_spaces(image.content_path)
         if image.style_path:
-            await delete_from_spaces(image.style_path)
+            delete_from_spaces(image.style_path)
 
         session.delete(image)
 

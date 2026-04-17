@@ -1,6 +1,6 @@
 import io
 import pytest
-from unittest.mock import patch, AsyncMock, MagicMock
+from unittest.mock import patch, MagicMock
 from sqlmodel import select
 from app.models import Image, User
 
@@ -109,7 +109,7 @@ def test_generate_image_too_large(authenticated_client):
     assert "too large" in response.json()["detail"]
 
 
-@patch("app.routers.nst.upload_to_spaces", new_callable=AsyncMock)
+@patch("app.routers.nst.upload_to_spaces")
 def test_generate_image_upload_failure(mock_upload, authenticated_client):
     """upload_to_spaces returning None can't be triggered via moto,
     so we patch it directly for this error-handling test."""
