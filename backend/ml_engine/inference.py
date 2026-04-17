@@ -29,6 +29,10 @@ def crop_center(image):
 
 def load_img(img_bytes: bytes, target_shape=None, max_dim=512):
     img = tf.image.decode_image(img_bytes, channels=3)
+    
+    if len(img.shape) == 4:
+        img = img[0]
+        
     img = tf.image.convert_image_dtype(img, tf.float32)
 
     if not target_shape:
