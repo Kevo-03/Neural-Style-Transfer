@@ -25,7 +25,7 @@ export default function Home() {
             href="/try"
             className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-8 py-3 text-base font-bold text-white hover:opacity-90 transition md:py-4 md:text-lg"
           >
-            Try It Out
+            Try Out
           </Link>
           <Link
             href="/signup"
