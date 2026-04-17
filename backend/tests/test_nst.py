@@ -71,6 +71,44 @@ def test_generate_image_unauthenticated(client):
     assert response.status_code == 401
 
 
+def test_generate_image_invalid_mime(authenticated_client):
+    response = authenticated_client.post(
+        "/generate",
+        files={
+            "content_file": _fake_upload_file("content.pdf", content_type="application/pdf"),
+            "style_file": _fake_upload_file("style.jpg"),
+        },
+    )
+    assert response.status_code == 400
+    assert "Invalid file type" in response.json()["detail"]
+
+
+def test_generate_image_invalid_extension(authenticated_client):
+    response = authenticated_client.post(
+        "/generate",
+        files={
+            "content_file": _fake_upload_file("content.jpg"),
+            "style_file": _fake_upload_file("style.exe", content_type="image/jpeg"),  # Fake mime but bad extension
+        },
+    )
+    assert response.status_code == 400
+    assert "Unsupported image format" in response.json()["detail"]
+
+
+def test_generate_image_too_large(authenticated_client):
+    # Generating 21 MB of fake bytes
+    big_content = b"0" * (21 * 1024 * 1024)
+    response = authenticated_client.post(
+        "/generate",
+        files={
+            "content_file": _fake_upload_file("content.jpg", content=big_content),
+            "style_file": _fake_upload_file("style.jpg"),
+        },
+    )
+    assert response.status_code == 413
+    assert "too large" in response.json()["detail"]
+
+
 @patch("app.routers.nst.upload_to_spaces", new_callable=AsyncMock)
 def test_generate_image_upload_failure(mock_upload, authenticated_client):
     """upload_to_spaces returning None can't be triggered via moto,

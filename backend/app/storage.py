@@ -1,7 +1,20 @@
 import boto3
 import uuid
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
 from app.config import settings
+
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp", "heic", "heif"}
+
+def validate_upload(file: UploadFile, max_size_mb: int = 20):
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail=f"Invalid file type for {file.filename}. Must be an image.")
+    
+    ext = file.filename.split(".")[-1].lower() if "." in file.filename else ""
+    if ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=400, detail=f"Unsupported image format: {ext}")
+        
+    if file.size and file.size > max_size_mb * 1024 * 1024:
+        raise HTTPException(status_code=413, detail=f"File {file.filename} is too large. Maximum size is {max_size_mb}MB.")
 
 s3_client = boto3.client(
     's3',

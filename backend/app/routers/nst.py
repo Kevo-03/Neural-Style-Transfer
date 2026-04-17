@@ -8,7 +8,7 @@ from app.config import settings
 from app.models import Image, User
 from app.schemas import ImageLibraryResponse
 from app.dependencies import get_current_user
-from app.storage import upload_to_spaces, delete_from_spaces, get_presigned_url
+from app.storage import upload_to_spaces, delete_from_spaces, get_presigned_url, validate_upload
 from typing import Annotated
 import os
 
@@ -25,6 +25,9 @@ async def generate_image(
     session: Annotated[Session, Depends(get_session)],
     current_user: Annotated[User, Depends(get_current_user)]
 ):
+    validate_upload(content_file)
+    validate_upload(style_file)
+
     content_url = await upload_to_spaces(content_file, folder="content")
     style_url = await upload_to_spaces(style_file, folder="style")
 
@@ -143,6 +146,9 @@ async def generate_public_art(
     content_file: UploadFile = File(...),
     style_file: UploadFile = File(...)
 ):
+    validate_upload(content_file)
+    validate_upload(style_file)
+
     content_url = await upload_to_spaces(content_file, "temp-public/content")
     style_url = await upload_to_spaces(style_file, "temp-public/style")
 
