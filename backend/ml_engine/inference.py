@@ -17,18 +17,34 @@ def get_model():
         print("Model Loaded!")
     return hub_model
 
-def load_img(img_bytes: bytes):
-    max_dim = 512
+def crop_center(image):
+  """Returns a cropped square image."""
+  shape = image.shape
+  new_shape = min(shape[1], shape[2])
+  offset_y = max(shape[1] - shape[2], 0) // 2
+  offset_x = max(shape[2] - shape[1], 0) // 2
+  image = tf.image.crop_to_bounding_box(
+      image, offset_y, offset_x, new_shape, new_shape)
+  return image
+
+def load_img(img_bytes: bytes, target_shape=None, max_dim=512):
     img = tf.image.decode_image(img_bytes, channels=3)
     img = tf.image.convert_image_dtype(img, tf.float32)
 
-    shape = tf.cast(tf.shape(img)[:-1], tf.float32)
-    long_dim = max(shape)
-    scale = max_dim / long_dim
+    if not target_shape:
+        shape = tf.cast(tf.shape(img)[:-1], tf.float32)
+        long_dim = max(shape)
+        scale = max_dim / long_dim
 
-    new_shape = tf.cast(shape * scale, tf.int32)
-    img = tf.image.resize(img, new_shape)
+        new_shape = tf.cast(shape * scale, tf.int32)
+        img = tf.image.resize(img, new_shape)
+
     img = img[tf.newaxis, :]
+    
+    if target_shape:
+        img = crop_center(img)
+        img = tf.image.resize(img, target_shape)
+            
     return img
 
 def tensor_to_image(tensor):
@@ -44,7 +60,7 @@ def run_inference(content_bytes: bytes, style_bytes: bytes) -> io.BytesIO:
     model = get_model()
 
     content_img = load_img(content_bytes)
-    style_img = load_img(style_bytes)
+    style_img = load_img(style_bytes, target_shape=(256, 256))
 
     outputs = model(tf.constant(content_img), tf.constant(style_img))
     stylized_image = outputs[0]
@@ -67,7 +83,7 @@ if __name__ == "__main__":
             
         out_stream = run_inference(c_bytes, s_bytes)
         
-        with open("output/test_result.jpg", "wb") as f:
+        with open("output/test_result1.jpg", "wb") as f:
             f.write(out_stream.read())
             
         print("✅ Success! Test image saved to output/test_result.jpg")
