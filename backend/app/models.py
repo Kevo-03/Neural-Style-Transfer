@@ -20,5 +20,5 @@ class Image(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     
-    user_id: Optional[int] = Field(default=None, foreign_key="user.id")
+    user_id: Optional[int] = Field(default=None, foreign_key="user.id", index=True)
     user: Optional[User] = Relationship(back_populates="images")
