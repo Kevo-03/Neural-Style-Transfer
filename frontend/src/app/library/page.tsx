@@ -43,7 +43,7 @@ export default async function LibraryPage() {
     return (
         <div className="min-h-screen bg-gray-900 px-4 py-12 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-7xl">
-                <h1 className="text-4xl font-extrabold mb-8 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+                <h1 className="text-3xl sm:text-4xl font-extrabold mb-8 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
                     My Library
                 </h1>
 

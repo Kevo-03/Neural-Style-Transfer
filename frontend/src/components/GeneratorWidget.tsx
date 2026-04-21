@@ -162,18 +162,18 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
             )}
 
             {status !== "COMPLETED" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl animate-fade-in">
+                <div className="grid grid-cols-2 gap-2 sm:gap-4 md:gap-8 w-full max-w-4xl animate-fade-in">
                     <div
                         onDragOver={(e) => handleDragOver(e, setIsDraggingContent)}
                         onDragLeave={(e) => handleDragLeave(e, setIsDraggingContent)}
                         onDrop={(e) => handleDrop(e, setContentFile, setContentPreview, setIsDraggingContent)}
-                        className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-64 
+                        className={`flex flex-col items-center justify-center gap-2 sm:gap-4 p-4 sm:p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-40 md:h-64 
               ${isDraggingContent ? 'border-purple-400 bg-gray-800/60 backdrop-blur-md scale-[1.02]' : contentFile ? 'border-purple-500 bg-gray-800/40 backdrop-blur-md' : 'border-white/10 hover:border-purple-500/50'}`}
                     >
                         {contentPreview ? (
                             <img src={contentPreview} alt="Content" className="absolute inset-0 w-full h-full object-cover opacity-60" />
-                        ) : <ImageIcon className="w-12 h-12 z-10 text-gray-400" />}
-                        <h2 className="text-xl font-semibold z-10 relative drop-shadow-md">Content Image</h2>
+                        ) : <ImageIcon className="w-8 h-8 md:w-12 md:h-12 z-10 text-gray-400" />}
+                        <h2 className="text-sm sm:text-xl font-semibold z-10 relative drop-shadow-md text-center">Content Image</h2>
                         <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setContentFile, setContentPreview)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
                     </div>
 
@@ -181,22 +181,22 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         onDragOver={(e) => handleDragOver(e, setIsDraggingStyle)}
                         onDragLeave={(e) => handleDragLeave(e, setIsDraggingStyle)}
                         onDrop={(e) => handleDrop(e, setStyleFile, setStylePreview, setIsDraggingStyle)}
-                        className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-64 
+                        className={`flex flex-col items-center justify-center gap-2 sm:gap-4 p-4 sm:p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-40 md:h-64 
               ${isDraggingStyle ? 'border-pink-400 bg-gray-800/60 backdrop-blur-md scale-[1.02]' : styleFile ? 'border-pink-500 bg-gray-800/40 backdrop-blur-md' : 'border-white/10 hover:border-pink-500/50'}`}
                     >
                         {stylePreview ? (
                             <img src={stylePreview} alt="Style" className="absolute inset-0 w-full h-full object-cover opacity-60" />
-                        ) : <UploadCloud className="w-12 h-12 z-10 text-gray-400" />}
-                        <h2 className="text-xl font-semibold z-10 relative drop-shadow-md">Style Image</h2>
+                        ) : <UploadCloud className="w-8 h-8 md:w-12 md:h-12 z-10 text-gray-400" />}
+                        <h2 className="text-sm sm:text-xl font-semibold z-10 relative drop-shadow-md text-center">Style Image</h2>
                         <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setStyleFile, setStylePreview)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
                     </div>
                 </div>
             )}
 
-            <div className="mt-12 text-center">
+            <div className="mt-8 md:mt-12 text-center">
                 {status === "IDLE" && (
                     <>
-                        <button onClick={handleUpload} disabled={!contentFile || !styleFile} className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button onClick={handleUpload} disabled={!contentFile || !styleFile} className="px-8 py-3 md:py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-base md:text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             Generate Art
                         </button>
 

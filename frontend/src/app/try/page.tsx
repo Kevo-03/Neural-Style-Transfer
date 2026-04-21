@@ -6,8 +6,8 @@ import Link from "next/link";
 export default function TryPage() {
     return (
         <div className="flex flex-col min-h-screen bg-gray-900">
-            <div className="flex-1 flex flex-col items-center px-4 pt-24 pb-16">
-                <h1 className="text-4xl font-extrabold text-white mb-2">
+            <div className="flex-1 flex flex-col items-center px-4 pt-16 sm:pt-24 pb-12 sm:pb-16 text-center">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2">
                     Try{" "}
                     <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
                         NeuralArt

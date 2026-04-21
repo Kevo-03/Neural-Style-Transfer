@@ -84,7 +84,7 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
                     You haven&apos;t generated any images yet. Head over to the Create tab!
                 </div>
             ) : (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-3 lg:grid-cols-4">
                     {images.map((img) => (
                         <div key={img.id} className="overflow-hidden rounded-xl bg-gray-800/40 backdrop-blur-md border border-white/10 shadow-xl transition hover:border-purple-500/50 flex flex-col h-full">
                             {img.status === "COMPLETED" && img.result ? (
@@ -93,18 +93,18 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
                                     alt={`Generated Art ${img.id}`}
                                     crossOrigin="anonymous"
                                     onClick={() => setLightboxUrl(img.result!)}
-                                    className="h-64 w-full object-cover transition-transform duration-300 hover:scale-[1.03]"
+                                    className="h-40 sm:h-64 w-full object-cover transition-transform duration-300 hover:scale-[1.03]"
                                     title="Click to view full image"
                                 />
                             ) : (
-                                <div className="flex h-64 w-full items-center justify-center bg-gray-900 text-sm font-medium text-gray-500 border-b border-gray-700">
+                                <div className="flex h-40 sm:h-64 w-full items-center justify-center bg-gray-900 text-sm font-medium text-gray-500 border-b border-gray-700">
                                     <span className="flex items-center gap-2">
                                         {img.status === "PROCESSING" && <Loader2 className="w-4 h-4 animate-spin" />}
                                         {img.status}
                                     </span>
                                 </div>
                             )}
-                            <div className="bg-gray-900/40 px-4 py-2 border-t border-white/10 flex justify-between items-center mt-auto">
+                            <div className="bg-gray-900/40 px-2 sm:px-4 py-1.5 sm:py-2 border-t border-white/10 flex flex-col sm:flex-row sm:justify-between items-center mt-auto gap-1 sm:gap-0">
                                 <p className={`text-xs font-semibold capitalize ${img.status === 'COMPLETED' ? 'text-green-400' :
                                     img.status === 'FAILED' ? 'text-red-400' : 'text-yellow-400'
                                     }`}>
