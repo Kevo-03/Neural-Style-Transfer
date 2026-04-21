@@ -195,9 +195,18 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
 
             <div className="mt-12 text-center">
                 {status === "IDLE" && (
-                    <button onClick={handleUpload} disabled={!contentFile || !styleFile} className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                        Generate Art
-                    </button>
+                    <>
+                        <button onClick={handleUpload} disabled={!contentFile || !styleFile} className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            Generate Art
+                        </button>
+
+                        {/* Tips */}
+                        <div className="mt-10 w-full max-w-4xl mx-auto text-left space-y-3">
+                            <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-4">Tips for best results</p>
+                            <p className="text-[15px] text-gray-400"><span className="text-gray-300 font-medium">Use artistic styles.</span> The style image should be a painting, illustration, or artwork — not an everyday photo. A plain photograph won&apos;t transfer a distinctive style.</p>
+                            <p className="text-[15px] text-gray-400"><span className="text-gray-300 font-medium">Keep subjects related.</span> Very unrelated pairings (e.g. a screenshot of a text message and a game character) tend to produce noisy, unpleasant output. This also applies to orientation — a portrait photo paired with a landscape painting (or vice-versa) can produce awkward results. The more visually compatible the pair, the better.</p>
+                        </div>
+                    </>
                 )}
                 {status === "UPLOADING" && <div className="flex items-center gap-3 text-purple-400 text-xl animate-pulse"><UploadCloud className="w-6 h-6" /> Uploading...</div>}
                 {status === "PROCESSING" && (
