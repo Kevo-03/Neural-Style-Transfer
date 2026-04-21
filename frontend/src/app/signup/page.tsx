@@ -47,12 +47,12 @@ export default function SignupPage() {
         <div className="flex min-h-screen items-center justify-center bg-gray-900 px-4">
             <div className="flex flex-col lg:flex-row items-stretch">
                 {/* NST showcase card */}
-                <div className="hidden lg:flex w-[28rem] rounded-l-2xl border border-r-0 border-gray-700 overflow-hidden relative">
+                <div className="hidden lg:flex w-[28rem] rounded-l-2xl border border-r-0 border-white/10 overflow-hidden relative">
                     <Image
                         src="/signup_photo.jpg"
                         alt="Neural Style Transfer example"
                         fill
-                        preload
+                        priority
                         unoptimized={true}
                         sizes="448px"
                         className="object-cover"
@@ -69,7 +69,7 @@ export default function SignupPage() {
                 </div>
 
                 {/* Signup form card */}
-                <div className="w-full lg:w-[28rem] space-y-8 rounded-2xl lg:rounded-l-none border border-gray-700 bg-gray-800 p-8 shadow-2xl">
+                <div className="w-full lg:w-[28rem] space-y-8 rounded-2xl lg:rounded-l-none border border-white/10 bg-gray-800/40 backdrop-blur-xl p-8 shadow-2xl">
                     <div>
                         <h2 className="text-center text-3xl font-extrabold text-white">
                             Create an Account
@@ -87,7 +87,7 @@ export default function SignupPage() {
                             <input
                                 type="text"
                                 required
-                                className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
+                                className="w-full rounded-lg border border-white/10 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
                                 placeholder="Username"
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
@@ -96,7 +96,7 @@ export default function SignupPage() {
                                 <input
                                     type="password"
                                     required
-                                    className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
+                                    className="w-full rounded-lg border border-white/10 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
                                     placeholder="Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -106,7 +106,7 @@ export default function SignupPage() {
                             <input
                                 type="password"
                                 required
-                                className="w-full rounded-lg border border-gray-600 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
+                                className="w-full rounded-lg border border-white/10 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
                                 placeholder="Confirm Password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -141,7 +141,7 @@ export default function SignupPage() {
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                        Creating...
+                                        Signing Up...
                                     </>
                                 ) : (
                                     "Sign Up"
