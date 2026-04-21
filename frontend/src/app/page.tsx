@@ -17,9 +17,9 @@ export default function Home() {
           </span>
         </h1>
         <p className="mx-auto mt-6 max-w-1xl text-lg text-gray-300">
-          <span className="hidden sm:block">Upload your photos and apply the visual style of your favourite artwork using Neural Style Transfer.</span>
+          <span className="hidden sm:block">Upload your photos and apply the visual style of your favourite artwork using Neural Style Transfer</span>
           <span className="block mt-2 font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-            Sign up to store your photos in your library.
+            Sign up to store your photos in your library
           </span>
         </p>
 
