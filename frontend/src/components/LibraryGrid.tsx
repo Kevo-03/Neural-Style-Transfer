@@ -21,6 +21,7 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
     const [imageToDelete, setImageToDelete] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
     useEffect(() => {
         if (toastMessage) {
@@ -91,7 +92,9 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
                                     src={img.result}
                                     alt={`Generated Art ${img.id}`}
                                     crossOrigin="anonymous"
-                                    className="h-64 w-full object-cover"
+                                    onClick={() => setLightboxUrl(img.result!)}
+                                    className="h-64 w-full object-cover cursor-zoom-in transition-transform duration-300 hover:scale-[1.03]"
+                                    title="Click to view full image"
                                 />
                             ) : (
                                 <div className="flex h-64 w-full items-center justify-center bg-gray-900 text-sm font-medium text-gray-500 border-b border-gray-700">
@@ -129,6 +132,31 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
                 </div>
             )}
 
+            {/* --- Lightbox --- */}
+            {lightboxUrl && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md px-4 py-8"
+                    onClick={() => setLightboxUrl(null)}
+                >
+                    <button
+                        onClick={() => setLightboxUrl(null)}
+                        className="absolute top-4 right-4 p-2 rounded-full bg-gray-800/80 text-gray-300 hover:text-white hover:bg-gray-700 transition"
+                        title="Close"
+                    >
+                        <X className="w-6 h-6" />
+                    </button>
+                    <img
+                        src={lightboxUrl}
+                        alt="Full-size preview"
+                        crossOrigin="anonymous"
+                        onClick={(e) => e.stopPropagation()}
+                        className="max-w-full max-h-full rounded-2xl shadow-2xl object-contain"
+                        style={{ maxHeight: "90vh" }}
+                    />
+                </div>
+            )}
+
+            {/* --- Delete confirmation --- */}
             {imageToDelete !== null && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
                     <div className="w-full max-w-sm rounded-2xl bg-gray-800 border border-gray-700 p-6 shadow-2xl animate-in zoom-in-95 fade-in duration-200">
