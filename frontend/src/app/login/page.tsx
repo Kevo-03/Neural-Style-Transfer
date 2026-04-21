@@ -103,10 +103,10 @@ export default function LoginPage() {
                                 {isLoading ? (
                                     <>
                                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                        Signing in...
+                                        Logging In...
                                     </>
                                 ) : (
-                                    "Sign in"
+                                    "Log In"
                                 )}
                             </button>
                         </div>
@@ -114,7 +114,7 @@ export default function LoginPage() {
                     <div className="text-center text-sm text-gray-400 mt-4">
                         Don't have an account?{" "}
                         <Link href="/signup" className="font-semibold text-purple-400 hover:text-pink-400 transition">
-                            Sign up here
+                            Sign Up here
                         </Link>
                     </div>
                 </div>

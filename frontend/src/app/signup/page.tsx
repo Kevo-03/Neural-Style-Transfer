@@ -144,7 +144,7 @@ export default function SignupPage() {
                                         Creating...
                                     </>
                                 ) : (
-                                    "Sign up"
+                                    "Sign Up"
                                 )}
                             </button>
                         </div>
@@ -153,7 +153,7 @@ export default function SignupPage() {
                     <div className="text-center text-sm text-gray-400">
                         Already have an account?{" "}
                         <Link href="/login" className="font-semibold text-purple-400 hover:text-pink-400 transition">
-                            Log in here
+                            Log In here
                         </Link>
                     </div>
                 </div>
