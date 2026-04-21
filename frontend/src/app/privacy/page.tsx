@@ -43,7 +43,7 @@ export default function PrivacyPolicy() {
                     <section>
                         <h2 className="text-xl font-bold text-white mb-2">5. Contact</h2>
                         <p className="leading-relaxed">
-                            If you have any questions about this Privacy Policy, please contact us at: <a href="mailto:neuralart.privacy@gmail.com" className="text-purple-400 hover:text-pink-400 transition underline decoration-purple-400/30">neuralart.privacy@gmail.com</a>
+                            If you have any questions about this Privacy Policy, please contact us at: <a href="mailto:neuralart.privacy@gmail.com" className="font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition underline decoration-purple-400/30">neuralart.privacy@gmail.com</a>
                         </p>
                     </section>
                 </div>

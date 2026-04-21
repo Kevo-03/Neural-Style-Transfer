@@ -40,7 +40,7 @@ export default function LoginPage() {
                         src="/demo-output.jpg"
                         alt="Neural Style Transfer example"
                         fill
-                        priority
+                        preload
                         unoptimized={true}
                         sizes="448px"
                         className="object-cover"
@@ -113,7 +113,7 @@ export default function LoginPage() {
                     </form>
                     <div className="text-center text-sm text-gray-400 mt-4">
                         Don't have an account?{" "}
-                        <Link href="/signup" className="font-semibold text-purple-400 hover:text-pink-400 transition">
+                        <Link href="/signup" className="font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition">
                             Sign Up here
                         </Link>
                     </div>

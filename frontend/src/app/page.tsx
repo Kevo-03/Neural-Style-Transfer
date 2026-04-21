@@ -17,7 +17,10 @@ export default function Home() {
           </span>
         </h1>
         <p className="mx-auto mt-6 max-w-1xl text-lg text-gray-300">
-          Upload your photos and apply the visual style of your favourite artwork using Neural Style Transfer.
+          <span className="block">Upload your photos and apply the visual style of your favourite artwork using Neural Style Transfer.</span>
+          <span className="block mt-2 font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+            Sign up to store your photos in your library.
+          </span>
         </p>
 
         <div className="mt-10 mb-24 flex flex-col justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
@@ -35,7 +38,7 @@ export default function Home() {
           </Link>
           <Link
             href="/login"
-            className="inline-flex items-center justify-center rounded-full border border-gray-600 bg-gray-800 px-8 py-3 text-base font-bold text-white hover:bg-gray-700 transition md:py-4 md:text-lg"
+            className="inline-flex items-center justify-center rounded-full border border-white/10 bg-gray-800/40 backdrop-blur-md px-8 py-3 text-base font-bold text-white hover:bg-white/10 transition md:py-4 md:text-lg"
           >
             Log In
           </Link>

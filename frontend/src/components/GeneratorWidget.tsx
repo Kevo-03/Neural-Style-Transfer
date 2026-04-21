@@ -154,7 +154,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
     return (
         <div className="flex flex-col items-center w-full">
             {errorMessage && (
-                <div className="flex items-center gap-3 w-full max-w-4xl p-4 mb-8 bg-red-900/30 border border-red-500/50 rounded-lg text-red-200">
+                <div className="flex items-center gap-3 w-full max-w-4xl p-4 mb-8 bg-red-900/30 border border-red-500/50 rounded-lg text-red-200 backdrop-blur-md">
                     <AlertCircle className="w-6 h-6 text-red-400 flex-shrink-0" />
                     <p className="font-medium">{errorMessage}</p>
                     <button onClick={() => setErrorMessage(null)} className="ml-auto text-red-400 hover:text-red-300">✕</button>
@@ -168,7 +168,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         onDragLeave={(e) => handleDragLeave(e, setIsDraggingContent)}
                         onDrop={(e) => handleDrop(e, setContentFile, setContentPreview, setIsDraggingContent)}
                         className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-64 
-              ${isDraggingContent ? 'border-purple-400 bg-gray-800 scale-[1.02]' : contentFile ? 'border-purple-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}
+              ${isDraggingContent ? 'border-purple-400 bg-gray-800/60 backdrop-blur-md scale-[1.02]' : contentFile ? 'border-purple-500 bg-gray-800/40 backdrop-blur-md' : 'border-white/10 hover:border-purple-500/50'}`}
                     >
                         {contentPreview ? (
                             <img src={contentPreview} alt="Content" className="absolute inset-0 w-full h-full object-cover opacity-60" />
@@ -182,7 +182,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         onDragLeave={(e) => handleDragLeave(e, setIsDraggingStyle)}
                         onDrop={(e) => handleDrop(e, setStyleFile, setStylePreview, setIsDraggingStyle)}
                         className={`flex flex-col items-center justify-center gap-4 p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-64 
-              ${isDraggingStyle ? 'border-pink-400 bg-gray-800 scale-[1.02]' : styleFile ? 'border-pink-500 bg-gray-800' : 'border-gray-700 hover:border-gray-500'}`}
+              ${isDraggingStyle ? 'border-pink-400 bg-gray-800/60 backdrop-blur-md scale-[1.02]' : styleFile ? 'border-pink-500 bg-gray-800/40 backdrop-blur-md' : 'border-white/10 hover:border-pink-500/50'}`}
                     >
                         {stylePreview ? (
                             <img src={stylePreview} alt="Style" className="absolute inset-0 w-full h-full object-cover opacity-60" />
@@ -220,7 +220,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         <div className="flex items-center gap-3 text-red-500 text-xl"><AlertCircle className="w-6 h-6" /> Something went wrong.</div>
                         <button
                             onClick={resetWidget}
-                            className="px-6 py-3 border border-gray-600 bg-gray-800 rounded-lg hover:bg-gray-700 transition font-semibold text-sm"
+                            className="px-6 py-3 border border-white/10 bg-gray-800/40 backdrop-blur-md rounded-lg hover:bg-white/10 transition font-semibold text-sm"
                         >
                             Try Again
                         </button>
@@ -244,7 +244,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                                     Create a free account to save images
                                 </Link>
                             ) : (
-                                <button onClick={resetWidget} className="px-6 py-3 border border-gray-600 bg-gray-800 rounded-lg hover:bg-gray-700 transition font-semibold">
+                                <button onClick={resetWidget} className="px-6 py-3 border border-white/10 bg-gray-800/40 backdrop-blur-md rounded-lg hover:bg-white/10 transition font-semibold">
                                     Create Another
                                 </button>
                             )}

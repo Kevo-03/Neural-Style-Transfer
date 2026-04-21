@@ -34,7 +34,7 @@ export default function NotFound() {
                 </Link>
                 <Link
                     href="/generate"
-                    className="inline-flex items-center justify-center rounded-lg border border-gray-600 bg-gray-800 px-6 py-3 text-sm font-bold text-gray-300 shadow-lg hover:bg-gray-700 hover:text-white transition"
+                    className="inline-flex items-center justify-center rounded-lg border border-white/10 bg-gray-800/40 backdrop-blur-md px-6 py-3 text-sm font-bold text-gray-300 shadow-lg hover:bg-gray-700 hover:text-white transition"
                 >
                     Create New Art
                 </Link>

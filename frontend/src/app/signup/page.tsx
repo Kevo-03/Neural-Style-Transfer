@@ -52,7 +52,7 @@ export default function SignupPage() {
                         src="/signup_photo.jpg"
                         alt="Neural Style Transfer example"
                         fill
-                        priority
+                        preload
                         unoptimized={true}
                         sizes="448px"
                         className="object-cover"
@@ -125,7 +125,7 @@ export default function SignupPage() {
                             <div className="ml-3 text-sm text-left">
                                 <label htmlFor="privacy-consent" className="text-gray-400">
                                     I agree to the{' '}
-                                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="font-medium text-purple-400 hover:text-purple-300 underline">
+                                    <a href="/privacy" target="_blank" rel="noopener noreferrer" className="font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition underline decoration-purple-400/30">
                                         Privacy Policy
                                     </a>
                                     {' '}and consent to the processing of my images.
@@ -152,7 +152,7 @@ export default function SignupPage() {
 
                     <div className="text-center text-sm text-gray-400">
                         Already have an account?{" "}
-                        <Link href="/login" className="font-semibold text-purple-400 hover:text-pink-400 transition">
+                        <Link href="/login" className="font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition">
                             Log In here
                         </Link>
                     </div>
