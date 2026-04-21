@@ -8,8 +8,10 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 30
 
     env_name: str = "development"
-    cookie_domain: Optional[str] = None
+    cookie_domain: str | None = None
+    cookie_secure: bool = True
     
+    space_upload_prefix: str = ""
     redis_url: str
     frontend_url: str
 

@@ -27,7 +27,8 @@ s3_client = boto3.client(
 def upload_to_spaces(file: UploadFile, folder: str = "uploads") -> str:
   
     file_extension = file.filename.split(".")[-1]
-    unique_filename = f"{folder}/{uuid.uuid4().hex}.{file_extension}"
+    prefix = f"{settings.space_upload_prefix}/" if settings.space_upload_prefix else ""
+    unique_filename = f"{prefix}{folder}/{uuid.uuid4().hex}.{file_extension}"
 
     try:
         s3_client.upload_fileobj(

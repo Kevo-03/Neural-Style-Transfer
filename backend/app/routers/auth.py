@@ -64,7 +64,7 @@ def login(
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=(settings.env_name == "production"),
+        secure=settings.cookie_secure,
         samesite="lax",
         domain=settings.cookie_domain,
         max_age=settings.access_token_expire_minutes * 60
@@ -78,7 +78,7 @@ def logout(response: Response):
     response.delete_cookie(
         key="access_token",
         domain=settings.cookie_domain,
-        secure=(settings.env_name == "production"),
+        secure=settings.cookie_secure,
         httponly=True,
         samesite="lax"
     )
@@ -114,7 +114,7 @@ def delete_user_account(
         key="access_token",
         domain=settings.cookie_domain,
         httponly=True,
-        secure=(settings.env_name == "production"),
+        secure=settings.cookie_secure,
         samesite="lax"
     )
 
