@@ -93,7 +93,7 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
                                     alt={`Generated Art ${img.id}`}
                                     crossOrigin="anonymous"
                                     onClick={() => setLightboxUrl(img.result!)}
-                                    className="h-64 w-full object-cover cursor-zoom-in transition-transform duration-300 hover:scale-[1.03]"
+                                    className="h-64 w-full object-cover transition-transform duration-300 hover:scale-[1.03]"
                                     title="Click to view full image"
                                 />
                             ) : (
