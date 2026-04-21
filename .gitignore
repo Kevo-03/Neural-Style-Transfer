@@ -9,6 +9,9 @@ __pycache__/
 .env
 .env.local
 
+# Local Docker Compose overrides (dev only, never commit)
+docker-compose.override.yml
+
 # OS files
 .DS_Store
 
