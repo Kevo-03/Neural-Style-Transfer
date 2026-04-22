@@ -210,9 +210,8 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                 )}
                 {status === "UPLOADING" && <div className="flex items-center gap-3 text-purple-400 text-xl animate-pulse"><UploadCloud className="w-6 h-6" /> Uploading...</div>}
                 {status === "PROCESSING" && (
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="flex items-center gap-3 text-yellow-400 text-xl"><Loader2 className="w-8 h-8 animate-spin" /> Painting masterpiece...</div>
-                        <p className="text-sm text-gray-500">This can take a few seconds.</p>
+                    <div className="flex items-center gap-3 text-yellow-400 text-xl">
+                        <Loader2 className="w-8 h-8 animate-spin" /> Transferring style...
                     </div>
                 )}
                 {status === "FAILED" && (
