@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import api from "@/lib/api";
 import Link from "next/link";
-import { UploadCloud, Image as ImageIcon, Loader2, CheckCircle, AlertCircle, Download } from "lucide-react";
+import { UploadCloud, Palette, Image as ImageIcon, Loader2, CheckCircle, AlertCircle, Download } from "lucide-react";
 
 interface GeneratorWidgetProps {
     isPublic?: boolean;
@@ -186,7 +186,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                     >
                         {stylePreview ? (
                             <img src={stylePreview} alt="Style" className="absolute inset-0 w-full h-full object-cover opacity-60" />
-                        ) : <UploadCloud className="w-8 h-8 md:w-12 md:h-12 z-10 text-gray-400" />}
+                        ) : <Palette className="w-8 h-8 md:w-12 md:h-12 z-10 text-gray-400" />}
                         <h2 className="text-sm sm:text-xl font-semibold z-10 relative drop-shadow-md text-center">Style Image</h2>
                         <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setStyleFile, setStylePreview)} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
                     </div>
