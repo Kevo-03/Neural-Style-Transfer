@@ -22,6 +22,7 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
     const [isDeleting, setIsDeleting] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+    const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
 
     useEffect(() => {
         if (toastMessage) {
@@ -88,14 +89,23 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
                     {images.map((img) => (
                         <div key={img.id} className="overflow-hidden rounded-xl bg-gray-800/40 backdrop-blur-md border border-white/10 shadow-xl transition hover:border-purple-500/50 flex flex-col h-full">
                             {img.status === "COMPLETED" && img.result ? (
-                                <img
-                                    src={img.result}
-                                    alt={`Generated Art ${img.id}`}
-                                    crossOrigin="anonymous"
-                                    onClick={() => setLightboxUrl(img.result!)}
-                                    className="h-40 sm:h-64 w-full object-cover transition-transform duration-300 hover:scale-[1.03]"
-                                    title="Click to view full image"
-                                />
+                                <div className="relative h-40 sm:h-64 w-full bg-gray-900 overflow-hidden border-b border-gray-700">
+                                    {!loadedImages[img.id] && (
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-500 z-0">
+                                            <Loader2 className="w-5 h-5 animate-spin mb-1" />
+                                        </div>
+                                    )}
+                                    <img
+                                        src={img.result}
+                                        alt={`Generated Art ${img.id}`}
+                                        crossOrigin="anonymous"
+                                        onLoad={() => setLoadedImages((prev) => prev[img.id] ? prev : { ...prev, [img.id]: true })}
+                                        onClick={() => setLightboxUrl(img.result!)}
+                                        onError={() => setLoadedImages((prev) => prev[img.id] ? prev : { ...prev, [img.id]: true })}
+                                        className={`relative z-10 h-full w-full object-cover transition-all duration-300 hover:scale-[1.03] ${loadedImages[img.id] ? "opacity-100" : "opacity-0"}`}
+                                        title="Click to view full image"
+                                    />
+                                </div>
                             ) : (
                                 <div className="flex h-40 sm:h-64 w-full items-center justify-center bg-gray-900 text-sm font-medium text-gray-500 border-b border-gray-700">
                                     <span className="flex items-center gap-2">
