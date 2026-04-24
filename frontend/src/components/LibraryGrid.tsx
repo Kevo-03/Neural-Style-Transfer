@@ -33,6 +33,25 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
         }
     }, [toastMessage]);
 
+    useEffect(() => {
+        const hasPending = images.some(
+            (img) => img.status === "PENDING" || img.status === "PROCESSING"
+        );
+
+        if (!hasPending) return;
+
+        const timer = setTimeout(async () => {
+            try {
+                const response = await api.get<ImageJob[]>("/library");
+                setImages(response.data);
+            } catch (error) {
+                console.error("Failed to poll for library updates:", error);
+            }
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [images]);
+
     const handleDownload = async (imageUrl: string, img_id: number) => {
         try {
             const response = await fetch(imageUrl);
