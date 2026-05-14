@@ -1,7 +1,9 @@
 from typing import Annotated
 import jwt
-from fastapi import Depends, HTTPException, Request, status
+from fastapi import Depends, File, HTTPException, Request, UploadFile, status
 from sqlmodel import Session, select
+
+from app.storage import validate_upload
 
 from app.db import get_session
 from app.models import User
@@ -47,3 +49,12 @@ def get_current_user(
         raise credentials_exception
 
     return user
+
+
+def validate_uploads(
+    content_file: Annotated[UploadFile, File(...)],
+    style_file: Annotated[UploadFile, File(...)],
+):
+    """Dependency that validates both upload files before the route handler runs."""
+    validate_upload(content_file)
+    validate_upload(style_file)

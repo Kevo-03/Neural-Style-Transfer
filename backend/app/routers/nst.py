@@ -7,8 +7,8 @@ from app.db import get_session
 from app.config import settings
 from app.models import Image, User
 from app.schemas import ImageLibraryResponse
-from app.dependencies import get_current_user
-from app.storage import upload_to_spaces, delete_from_spaces, get_presigned_url, validate_upload
+from app.storage import upload_to_spaces, delete_from_spaces, get_presigned_url
+from app.dependencies import get_current_user, validate_uploads
 from typing import Annotated
 import os
 
@@ -23,10 +23,9 @@ def generate_image(
     content_file: Annotated[UploadFile, File(...)],
     style_file: Annotated[UploadFile, File(...)],
     session: Annotated[Session, Depends(get_session)],
-    current_user: Annotated[User, Depends(get_current_user)]
+    current_user: Annotated[User, Depends(get_current_user)],
+    _: Annotated[None, Depends(validate_uploads)],
 ):
-    validate_upload(content_file)
-    validate_upload(style_file)
 
     content_url = upload_to_spaces(content_file, folder="content")
     style_url = upload_to_spaces(style_file, folder="style")
@@ -144,10 +143,9 @@ def delete_image(
 def generate_public_art(
     request: Request,
     content_file: UploadFile = File(...),
-    style_file: UploadFile = File(...)
+    style_file: UploadFile = File(...),
+    _: None = Depends(validate_uploads),
 ):
-    validate_upload(content_file)
-    validate_upload(style_file)
 
     content_url = upload_to_spaces(content_file, "temp-public/content")
     style_url = upload_to_spaces(style_file, "temp-public/style")
