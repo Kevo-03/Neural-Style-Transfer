@@ -23,7 +23,7 @@ export default function Navbar() {
             <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between">
 
                 <div className="flex items-center">
-                    <span className="text-lg sm:text-2xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent cursor-default">
+                    <span className="text-lg sm:text-2xl font-extrabold tracking-tight text-indigo-400 cursor-default">
                         NeuralArt
                     </span>
                 </div>
@@ -31,13 +31,13 @@ export default function Navbar() {
                 <div className="flex items-center space-x-3 sm:space-x-6">
                     <Link
                         href="/generate"
-                        className="text-xs sm:text-sm font-semibold text-gray-300 hover:text-purple-400 transition"
+                        className="text-xs sm:text-sm font-semibold text-gray-300 hover:text-indigo-400 transition"
                     >
                         Create
                     </Link>
                     <Link
                         href="/library"
-                        className="text-xs sm:text-sm font-semibold text-gray-300 hover:text-pink-400 transition"
+                        className="text-xs sm:text-sm font-semibold text-gray-300 hover:text-indigo-400 transition"
                     >
                         My Library
                     </Link>

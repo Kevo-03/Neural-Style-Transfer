@@ -49,7 +49,7 @@ export default function LoginPage() {
                     <div className="absolute bottom-8 left-8 right-8 z-10">
                         <h2 className="mt-2 text-2xl font-extrabold text-white leading-tight">
                             Transform your photos into{" "}
-                            <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                            <span className="text-indigo-400">
                                 stunning art
                             </span>
                         </h2>
@@ -76,7 +76,7 @@ export default function LoginPage() {
                                 <input
                                     type="text"
                                     required
-                                    className="w-full rounded-lg border border-white/10 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
+                                    className="w-full rounded-lg border border-white/10 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition"
                                     placeholder="Username"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
@@ -86,7 +86,7 @@ export default function LoginPage() {
                                 <input
                                     type="password"
                                     required
-                                    className="w-full rounded-lg border border-white/10 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 sm:text-sm transition"
+                                    className="w-full rounded-lg border border-white/10 bg-gray-900/50 px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm transition"
                                     placeholder="Password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -98,7 +98,7 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="group relative flex w-full justify-center items-center rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-4 py-3 text-sm font-bold text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                                className="group relative flex w-full justify-center items-center rounded-lg bg-indigo-500 px-4 py-3 text-sm font-bold text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                             >
                                 {isLoading ? (
                                     <>
@@ -113,7 +113,7 @@ export default function LoginPage() {
                     </form>
                     <div className="text-center text-sm text-gray-400 mt-4">
                         Don't have an account?{" "}
-                        <Link href="/signup" className="font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition">
+                        <Link href="/signup" className="font-bold text-indigo-400 hover:opacity-80 transition">
                             Sign Up here
                         </Link>
                     </div>

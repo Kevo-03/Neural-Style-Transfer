@@ -5,7 +5,7 @@ export default function PrivacyPolicy() {
         <div className="min-h-screen bg-gray-900 text-gray-300 px-4 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl w-full">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-extrabold text-white bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent inline-block">
+                    <h1 className="text-4xl font-extrabold text-indigo-400 inline-block">
                         Privacy Policy
                     </h1>
                     <p className="text-sm text-gray-500 mt-2">Last Updated: April 2026</p>
@@ -43,7 +43,7 @@ export default function PrivacyPolicy() {
                     <section>
                         <h2 className="text-xl font-bold text-white mb-2">5. Contact</h2>
                         <p className="leading-relaxed">
-                            If you have any questions about this Privacy Policy, please contact us at: <a href="mailto:neuralart.privacy@gmail.com" className="font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition underline decoration-purple-400/30">neuralart.privacy@gmail.com</a>
+                            If you have any questions about this Privacy Policy, please contact us at: <a href="mailto:neuralart.privacy@gmail.com" className="font-bold text-indigo-400 hover:opacity-80 transition underline decoration-indigo-400/30">neuralart.privacy@gmail.com</a>
                         </p>
                     </section>
                 </div>

@@ -168,7 +168,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         onDragLeave={(e) => handleDragLeave(e, setIsDraggingContent)}
                         onDrop={(e) => handleDrop(e, setContentFile, setContentPreview, setIsDraggingContent)}
                         className={`flex flex-col items-center justify-center gap-2 sm:gap-4 p-4 sm:p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-40 md:h-64 
-              ${isDraggingContent ? 'border-purple-400 bg-gray-800/60 backdrop-blur-md scale-[1.02]' : contentFile ? 'border-purple-500 bg-gray-800/40 backdrop-blur-md' : 'border-white/10 hover:border-purple-500/50'}`}
+              ${isDraggingContent ? 'border-indigo-400 bg-gray-800/60 backdrop-blur-md scale-[1.02]' : contentFile ? 'border-indigo-500 bg-gray-800/40 backdrop-blur-md' : 'border-white/10 hover:border-indigo-500/50'}`}
                     >
                         {contentPreview ? (
                             <img src={contentPreview} alt="Content" className="absolute inset-0 w-full h-full object-cover opacity-60" />
@@ -182,7 +182,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         onDragLeave={(e) => handleDragLeave(e, setIsDraggingStyle)}
                         onDrop={(e) => handleDrop(e, setStyleFile, setStylePreview, setIsDraggingStyle)}
                         className={`flex flex-col items-center justify-center gap-2 sm:gap-4 p-4 sm:p-8 border-2 border-dashed rounded-xl transition-all duration-200 relative overflow-hidden h-40 md:h-64 
-              ${isDraggingStyle ? 'border-pink-400 bg-gray-800/60 backdrop-blur-md scale-[1.02]' : styleFile ? 'border-pink-500 bg-gray-800/40 backdrop-blur-md' : 'border-white/10 hover:border-pink-500/50'}`}
+              ${isDraggingStyle ? 'border-indigo-400 bg-gray-800/60 backdrop-blur-md scale-[1.02]' : styleFile ? 'border-indigo-500 bg-gray-800/40 backdrop-blur-md' : 'border-white/10 hover:border-indigo-500/50'}`}
                     >
                         {stylePreview ? (
                             <img src={stylePreview} alt="Style" className="absolute inset-0 w-full h-full object-cover opacity-60" />
@@ -196,7 +196,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
             <div className="mt-8 md:mt-12 text-center">
                 {status === "IDLE" && (
                     <>
-                        <button onClick={handleUpload} disabled={!contentFile || !styleFile} className="px-8 py-3 md:py-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full font-bold text-base md:text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button onClick={handleUpload} disabled={!contentFile || !styleFile} className="px-8 py-3 md:py-4 bg-indigo-500 rounded-full font-bold text-base md:text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
                             Generate Art
                         </button>
 
@@ -208,7 +208,7 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                         </div>
                     </>
                 )}
-                {status === "UPLOADING" && <div className="flex items-center gap-3 text-purple-400 text-xl animate-pulse"><UploadCloud className="w-6 h-6" /> Uploading...</div>}
+                {status === "UPLOADING" && <div className="flex items-center gap-3 text-indigo-400 text-xl animate-pulse"><UploadCloud className="w-6 h-6" /> Uploading...</div>}
                 {status === "PROCESSING" && (
                     <div className="flex items-center gap-3 text-yellow-400 text-xl">
                         <Loader2 className="w-8 h-8 animate-spin" /> Transferring style...
@@ -230,16 +230,16 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
                     <div className="flex flex-col items-center gap-6 animate-in fade-in zoom-in duration-500">
                         <div className="flex items-center gap-2 text-green-400 text-2xl font-bold"><CheckCircle className="w-8 h-8" /> Done!</div>
                         {resultImage && (
-                            <div className="relative p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl shadow-2xl">
+                            <div className="relative p-2 bg-indigo-500 rounded-xl shadow-2xl">
                                 <img src={resultImage} alt="Masterpiece" crossOrigin="anonymous" className="w-full max-w-2xl rounded-lg object-cover" />
                             </div>
                         )}
                         <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
-                            <button onClick={handleDownload} className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:opacity-90 transition font-semibold">
+                            <button onClick={handleDownload} className="flex items-center gap-2 px-6 py-3 bg-indigo-500 rounded-lg hover:opacity-90 transition font-semibold">
                                 <Download className="w-5 h-5" /> Download Art
                             </button>
                             {isPublic ? (
-                                <Link href="/signup" className="px-6 py-3 border border-purple-500 bg-purple-900/30 text-purple-300 rounded-lg hover:bg-purple-900/50 transition font-semibold">
+                                <Link href="/signup" className="px-6 py-3 border border-indigo-500 bg-indigo-900/30 text-indigo-300 rounded-lg hover:bg-indigo-900/50 transition font-semibold">
                                     Create a free account to save images
                                 </Link>
                             ) : (

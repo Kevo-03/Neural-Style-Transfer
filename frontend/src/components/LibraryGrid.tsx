@@ -106,7 +106,7 @@ export default function LibraryGrid({ initialImages, hasError = false }: Library
             ) : (
                 <div className="grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-3 lg:grid-cols-4">
                     {images.map((img) => (
-                        <div key={img.id} className="overflow-hidden rounded-xl bg-gray-800/40 backdrop-blur-md border border-white/10 shadow-xl transition hover:border-purple-500/50 flex flex-col h-full">
+                        <div key={img.id} className="overflow-hidden rounded-xl bg-gray-800/40 backdrop-blur-md border border-white/10 shadow-xl transition hover:border-indigo-500/50 flex flex-col h-full">
                             {img.status === "COMPLETED" && img.result ? (
                                 <div className="relative h-40 sm:h-64 w-full bg-gray-900 overflow-hidden border-b border-gray-700">
                                     {!loadedImages[img.id] && (
