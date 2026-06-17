@@ -1,27 +1,22 @@
-# Dependencies
+
 node_modules/
 backend/venv/
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Environment variables (Never commit these!)
 .env
 .env.local
 
-# Local Docker Compose overrides (dev only, never commit)
 docker-compose.override.yml
 
-# OS files
 .DS_Store
 
-# Machine Learning (Don't commit heavy weights or inputs)
 backend/ml_engine/models/
 backend/ml_engine/input/
 backend/ml_engine/output/
 backend/static/
 *.pth
 
-# Databases
 *.db
 *.sqlite3
