@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { BACKEND_AVAILABLE, DISABLED_ACTION_CLASS, useServiceStatus } from "@/context/ServiceStatusContext";
 import Image from "next/image";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
@@ -13,10 +14,17 @@ export default function SignupPage() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const { signup } = useAuth();
+    const { reportUnavailable } = useServiceStatus();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
+
+        // The backend is no longer hosted — surface the notice instead of failing a request.
+        if (!BACKEND_AVAILABLE) {
+            reportUnavailable();
+            return;
+        }
 
         if (password.length < 8) {
             setError("Password must be at least 8 characters long.");
@@ -136,7 +144,17 @@ export default function SignupPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="group relative flex w-full justify-center items-center rounded-lg bg-indigo-500 px-4 py-3 text-sm font-bold text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                                aria-disabled={!BACKEND_AVAILABLE || isLoading}
+                                title={!BACKEND_AVAILABLE ? "Unavailable — the backend is no longer hosted" : undefined}
+                                // Cancelling the click skips HTML validation, so the notice
+                                // shows even when the fields are empty.
+                                onClick={(e) => {
+                                    if (!BACKEND_AVAILABLE) {
+                                        e.preventDefault();
+                                        reportUnavailable();
+                                    }
+                                }}
+                                className={`group relative flex w-full justify-center items-center rounded-lg bg-indigo-500 px-4 py-3 text-sm font-bold text-white transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg ${!BACKEND_AVAILABLE ? DISABLED_ACTION_CLASS : "hover:opacity-90"}`}
                             >
                                 {isLoading ? (
                                     <>

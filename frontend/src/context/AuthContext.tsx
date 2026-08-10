@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext } from "react";
 import api from "../lib/api";
+import { BACKEND_AVAILABLE } from "./ServiceStatusContext";
 
 interface AuthContextType {
     login: (username: string, password: string) => Promise<void>;
@@ -45,7 +46,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const logout = async () => {
-        await api.post("/auth/logout");
+        // Log Out stays usable while the backend is down: skip the request that
+        // would throw and never redirect, and just send the user home.
+        if (BACKEND_AVAILABLE) {
+            await api.post("/auth/logout");
+        }
         window.location.href = "/";
     };
 

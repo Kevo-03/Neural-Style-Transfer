@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import api from "@/lib/api";
 import Link from "next/link";
+import { BACKEND_AVAILABLE, DISABLED_ACTION_CLASS, useServiceStatus } from "@/context/ServiceStatusContext";
 import { UploadCloud, Palette, Image as ImageIcon, Loader2, CheckCircle, AlertCircle, Download } from "lucide-react";
 
 interface GeneratorWidgetProps {
@@ -10,6 +11,7 @@ interface GeneratorWidgetProps {
 }
 
 export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetProps) {
+    const { reportUnavailable } = useServiceStatus();
     const [contentFile, setContentFile] = useState<File | null>(null);
     const [styleFile, setStyleFile] = useState<File | null>(null);
     const [contentPreview, setContentPreview] = useState<string | null>(null);
@@ -68,6 +70,12 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
     }, []);
 
     const handleUpload = async () => {
+        // The backend is no longer hosted — surface the notice instead of failing a request.
+        if (!BACKEND_AVAILABLE) {
+            reportUnavailable();
+            return;
+        }
+
         if (!contentFile || !styleFile) return;
 
         setIsUploading(true);
@@ -196,7 +204,15 @@ export default function GeneratorWidget({ isPublic = false }: GeneratorWidgetPro
             <div className="mt-8 md:mt-12 text-center">
                 {status === "IDLE" && (
                     <>
-                        <button onClick={handleUpload} disabled={!contentFile || !styleFile} className="px-8 py-3 md:py-4 bg-indigo-500 rounded-full font-bold text-base md:text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        {/* While the backend is down the button stays clickable (but looks
+                            disabled) so a click can re-surface the service notice. */}
+                        <button
+                            onClick={handleUpload}
+                            disabled={BACKEND_AVAILABLE && (!contentFile || !styleFile)}
+                            aria-disabled={!BACKEND_AVAILABLE || !contentFile || !styleFile}
+                            title={!BACKEND_AVAILABLE ? "Unavailable — the backend is no longer hosted" : undefined}
+                            className={`px-8 py-3 md:py-4 bg-indigo-500 rounded-full font-bold text-base md:text-lg transition disabled:opacity-50 disabled:cursor-not-allowed ${!BACKEND_AVAILABLE ? DISABLED_ACTION_CLASS : "hover:opacity-90"}`}
+                        >
                             Generate Art
                         </button>
 
